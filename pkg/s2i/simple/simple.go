@@ -15,13 +15,16 @@ const (
 	imageOwner   = "caicloud"
 )
 
+// S2IClient is the type for using s2i.
 type S2IClient struct {
 }
 
+// New returns a new S2IClient.
 func New() *S2IClient {
 	return &S2IClient{}
 }
 
+// SourceToImage converts the code to the image.
 func (s S2IClient) SourceToImage(code, jobName string) (string, error) {
 	dir, err := ioutil.TempDir(os.TempDir(), prefix)
 	if err != nil {
@@ -43,7 +46,7 @@ func (s S2IClient) SourceToImage(code, jobName string) (string, error) {
 		return "", err
 	}
 
-	// TODO: Push to a Docker Registry.
+	// TODO(gaocegege): Push to a Docker Registry.
 
 	return imageName, err
 }

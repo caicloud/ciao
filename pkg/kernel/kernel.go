@@ -1,3 +1,4 @@
+// Package kernel is mostly copied from by https://github.com/gopherdata/gophernotes.
 package kernel
 
 import (

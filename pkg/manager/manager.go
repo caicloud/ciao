@@ -13,12 +13,14 @@ const (
 	jobNamePrefix = "jupyter-kernel"
 )
 
+// Manager is the type for the manager.
 type Manager struct {
 	Backend     backend.Interface
 	S2IClient   s2i.Interface
 	Interpreter interpreter.Interface
 }
 
+// New creates a new Manager.
 func New(Backend backend.Interface, S2IClient s2i.Interface, Interpreter interpreter.Interface) *Manager {
 	return &Manager{
 		Backend:     Backend,
@@ -27,6 +29,7 @@ func New(Backend backend.Interface, S2IClient s2i.Interface, Interpreter interpr
 	}
 }
 
+// Execute executes the code.
 func (m Manager) Execute(code string) (*types.Job, error) {
 	parameter, err := m.Interpreter.Preprocess(code)
 	if err != nil {
@@ -53,6 +56,7 @@ func (m Manager) Execute(code string) (*types.Job, error) {
 	return job, nil
 }
 
+// GetImage gets the image by the given code.
 func (m Manager) GetImage(code, jobName string) (string, error) {
 	fmt.Println("[kubeflow] Building the Docker image...")
 	imageName, err := m.S2IClient.SourceToImage(code, jobName)

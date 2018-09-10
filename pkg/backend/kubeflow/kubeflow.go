@@ -24,11 +24,13 @@ const (
 	retryTime        = 10
 )
 
+// Backend is the type for kubeflow backend.
 type Backend struct {
 	KubeflowClient kubeflowclient.Interface
 	K8sClient      kubeclient.Interface
 }
 
+// New returns a new Backend.
 func New(config *restclientset.Config) (*Backend, error) {
 	kubeflowClient, err := kubeflowclient.NewForConfig(restclientset.AddUserAgent(config, userAgent))
 	if err != nil {
@@ -45,11 +47,12 @@ func New(config *restclientset.Config) (*Backend, error) {
 	}, nil
 }
 
+// ExecCode executes the code according to the parameter.
 func (b *Backend) ExecCode(parameter *types.Parameter) (*types.Job, error) {
 	psCount := int32(parameter.PSCount)
 	workerCount := int32(parameter.WorkerCount)
 
-	// TODO: Using a function to generate it.
+	// TODO(gaocegege): Using a function to generate it.
 	tfJob := &tfv1alpha2.TFJob{
 		TypeMeta: metav1.TypeMeta{
 			Kind: tfv1alpha2.Kind,

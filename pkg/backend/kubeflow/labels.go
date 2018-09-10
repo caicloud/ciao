@@ -22,6 +22,8 @@ func GetLabelSelectorForJob(job *types.Job) string {
 	return "-1"
 }
 
+// GetReplicaInstanceForPod gets the instance name of the given pod.
+// e.g. kubeflow-xsadd-worker-0 will return worker-0.
 func GetReplicaInstanceForPod(job *types.Job, pod v1.Pod) string {
 	if job.Framework == types.FrameworkTypeTensorFlow {
 		return fmt.Sprintf("%s-%s", pod.Labels[tfReplicaTypeLabel], pod.Labels[tfReplicaIndexLabel])

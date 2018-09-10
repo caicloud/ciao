@@ -7,17 +7,18 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 
 	kubeflowbackend "github.com/caicloud/ciao/pkg/backend/kubeflow"
-	interpreter "github.com/caicloud/ciao/pkg/interpreter/simple"
+	simpleinterpreter "github.com/caicloud/ciao/pkg/interpreter/simple"
 	"github.com/caicloud/ciao/pkg/kernel"
 	"github.com/caicloud/ciao/pkg/manager"
-	s2i "github.com/caicloud/ciao/pkg/s2i/simple"
+	simples2i "github.com/caicloud/ciao/pkg/s2i/simple"
 	"github.com/caicloud/ciao/version"
 )
 
-const RecommendedKubeConfigPathEnv = "KUBECONFIG"
+const (
+	RecommendedKubeConfigPathEnv = "KUBECONFIG"
+)
 
 func main() {
-
 	// Parse the connection file.
 	flag.Parse()
 	if flag.NArg() < 1 {
@@ -46,9 +47,9 @@ func main() {
 	}
 
 	// TODO: Using a real s2i client.
-	s2iClient := s2i.New()
+	s2iClient := simples2i.New()
 
-	interpreter := interpreter.New()
+	interpreter := simpleinterpreter.New()
 
 	manager := manager.New(kubeflowBackend, s2iClient, interpreter)
 

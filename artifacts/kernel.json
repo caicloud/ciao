@@ -3,6 +3,6 @@
     "kubeflow-kernel",
     "{connection_file}"
   ],
-  "display_name": "Kubeflow",
-  "language": "Python"
+  "display_name": "Kubeflow-Python3",
+  "language": "Python 3"
 }

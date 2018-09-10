@@ -7,6 +7,7 @@ import (
 	"github.com/caicloud/ciao/pkg/types"
 )
 
+// TestPreprocess test the preprocess logic.
 func TestPreprocess(t *testing.T) {
 	i := New()
 	type TestCase struct {
@@ -57,6 +58,7 @@ some code here.
 	}
 }
 
+// TestGetPreProcessedCode tests the logic about getting the preprocessed code.
 func TestGetPreProcessedCode(t *testing.T) {
 	i := New()
 	type TestCase struct {

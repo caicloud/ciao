@@ -8,12 +8,14 @@ import (
 	"github.com/caicloud/ciao/pkg/types"
 )
 
+// Interpreter is the type for the simple interpreter.
 type Interpreter struct {
 	FrameworkPrefix string
 	WorkerPrefix    string
 	PSPrefix        string
 }
 
+// New returns a new interpreter.
 func New() *Interpreter {
 	return &Interpreter{
 		FrameworkPrefix: "%kubeflow framework=",
@@ -22,6 +24,7 @@ func New() *Interpreter {
 	}
 }
 
+// Preprocess interprets the magic commands.
 func (i Interpreter) Preprocess(code string) (*types.Parameter, error) {
 	param := &types.Parameter{}
 	lines := strings.Split(code, "\n")
@@ -56,6 +59,7 @@ func (i Interpreter) parseMagicCommand(param *types.Parameter, line string) erro
 	return nil
 }
 
+// PreprocessedCode gets the preprocessed code ( the code without magic commands.)
 func (i Interpreter) PreprocessedCode(code string) string {
 	lines := strings.Split(code, "\n")
 	res := ""
