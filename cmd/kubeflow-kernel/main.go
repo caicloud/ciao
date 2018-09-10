@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 
 	"k8s.io/client-go/tools/clientcmd"
 
@@ -25,15 +26,15 @@ func main() {
 		log.Fatalln("Need a command line argument specifying the connection file.")
 	}
 
-	// This is a trick!
+	// This is a trick! Jupyter does not use the env var to create kernel.
 	kubeconfig := "/var/run/kubernetes/admin.kubeconfig"
 
-	// // Note: ENV KUBECONFIG will overwrite user defined Kubeconfig option.
-	// if len(os.Getenv(RecommendedKubeConfigPathEnv)) > 0 {
-	// 	// use the current context in kubeconfig
-	// 	// This is very useful for running locally.
-	// 	kubeconfig = os.Getenv(RecommendedKubeConfigPathEnv)
-	// }
+	// Note: ENV KUBECONFIG will overwrite user defined Kubeconfig option.
+	if len(os.Getenv(RecommendedKubeConfigPathEnv)) > 0 {
+		// use the current context in kubeconfig
+		// This is very useful for running locally.
+		kubeconfig = os.Getenv(RecommendedKubeConfigPathEnv)
+	}
 
 	// Get kubernetes config.
 	kcfg, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
