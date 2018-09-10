@@ -20,7 +20,7 @@ Please see [Getting Started with Kubeflow](https://www.kubeflow.org/docs/started
 
 Run the script `hack/install.sh`, then the specification of the kernel will be installed to `${HOME}/.local/share/jupyter/kernels/kubeflow`, then Jupyter will know the information about Ciao.
 
-Then we need to create a configuration file `$HOME/.ciao.yaml`:
+Then we need to create a configuration file `$HOME/.ciao/config.yaml`:
 
 ```yaml
 kubeconfig: {path to your kubeconfig}

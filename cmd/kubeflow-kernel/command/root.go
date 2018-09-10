@@ -29,7 +29,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ciao.yaml)")
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ciao/config.yaml)")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -38,8 +38,8 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	}
 
-	viper.SetConfigName(".ciao") // name of config file (without extension)
-	viper.AddConfigPath("$HOME") // adding home directory as first search path
+	viper.SetConfigName("config")      // name of config file (without extension)
+	viper.AddConfigPath("$HOME/.ciao") // adding home directory as first search path
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
