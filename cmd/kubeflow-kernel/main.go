@@ -26,7 +26,7 @@ func main() {
 		log.Fatalln("Need a command line argument specifying the connection file.")
 	}
 
-	// This is a trick!
+	// This is a trick! Jupyter does not use the env var to create kernel.
 	kubeconfig := "/var/run/kubernetes/admin.kubeconfig"
 
 	// Note: ENV KUBECONFIG will overwrite user defined Kubeconfig option.
