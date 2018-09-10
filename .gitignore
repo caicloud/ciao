@@ -12,5 +12,4 @@
 *.out
 
 /kubeflow-kernel
-vendor/
 .ipynb_checkpoints/
