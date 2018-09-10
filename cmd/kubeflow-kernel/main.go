@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 
 	"k8s.io/client-go/tools/clientcmd"
 
@@ -28,12 +29,12 @@ func main() {
 	// This is a trick!
 	kubeconfig := "/var/run/kubernetes/admin.kubeconfig"
 
-	// // Note: ENV KUBECONFIG will overwrite user defined Kubeconfig option.
-	// if len(os.Getenv(RecommendedKubeConfigPathEnv)) > 0 {
-	// 	// use the current context in kubeconfig
-	// 	// This is very useful for running locally.
-	// 	kubeconfig = os.Getenv(RecommendedKubeConfigPathEnv)
-	// }
+	// Note: ENV KUBECONFIG will overwrite user defined Kubeconfig option.
+	if len(os.Getenv(RecommendedKubeConfigPathEnv)) > 0 {
+		// use the current context in kubeconfig
+		// This is very useful for running locally.
+		kubeconfig = os.Getenv(RecommendedKubeConfigPathEnv)
+	}
 
 	// Get kubernetes config.
 	kcfg, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
