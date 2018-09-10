@@ -1,0 +1,8 @@
+{
+  "argv": [
+    "kubeflow-kernel",
+    "{connection_file}"
+  ],
+  "display_name": "Kubeflow-Python3",
+  "language": "Python 3"
+}

@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+echo "---> Building and installing application from source..."
+if [ "$(ls -A /tmp/src)" ]; then
+  mv /tmp/src/* /app/
+fi
