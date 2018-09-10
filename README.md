@@ -15,7 +15,7 @@ Ciao's goal is to simplify the machine learning workflow using Kubeflow. Current
 
 ## Demo
 
-Please see the [demo page](./docs/demo.md)
+Please see the [Demo Show](./docs/demo.md).
 
 ### Usage
 
@@ -27,8 +27,18 @@ There are some magic commands supported by Ciao:
 
 ### Examples
 
-- [Distributed Training With Ciao](./docs/examples/example.ipynb)
+- [Distributed Training with Ciao](./docs/examples/example.ipynb)
 
-### Installation
+## Installation
 
-Please see the [installation guide](./docs/installation.md).
+Please see the [Installation Guide](./docs/installation.md).
+
+## Design Document
+
+Please see the [Design Document](./docs/design.md) to know the architecture of Ciao.
+
+## Acknowledgments
+
+- Thank [kubeflow/kubeflow](https://github.com/kubeflow/kubeflow) for the awesome operators which supports TensorFlow/PyTorch and many other ML frameworks on Kubernetes.
+- Thank [gopherdata/gophernotes](https://github.com/gopherdata/gophernotes) for the reference implementation of Jupyter Kernel in Golang.
+- Thank [openshift/source-to-image](https://github.com/openshift/source-to-image) for the tool to convert source code to Docker image directly.
