@@ -103,6 +103,7 @@ func (b *Backend) GetLogs(job *types.Job) {
 		go b.getLogForPod(job, pod, wg)
 	}
 	wg.Wait()
+	fmt.Printf("[kubeflow] Finished\n")
 	return
 }
 

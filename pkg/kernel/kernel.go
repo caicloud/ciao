@@ -287,7 +287,7 @@ func (k Kernel) doEval(code string) (val []interface{}, err error) {
 		return nil, err
 	}
 	fmt.Printf("Job %s is created.", job.Name)
-	return nil, nil
+	return val, nil
 }
 
 // handleShutdownRequest sends a "shutdown" message.

@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	prefix              = "kubeflow-kernel-code"
+	prefix              = "kubeflow-kernel-code."
 	codeFile            = "code.py"
 	builderImageTF      = "gaocegege/tensorflow-s2i:1.10.1-py3"
 	builderImagePyTorch = "gaocegege/pytorch-s2i:v0.2"
@@ -45,8 +45,9 @@ func (s S2IClient) SourceToImage(code string, parameter *types.Parameter) (strin
 
 	cmd := exec.Command("s2i", "build", dir, getBuilderImage(parameter), imageName)
 	cmd.Dir = dir
-	_, err = cmd.Output()
+	output, err := cmd.Output()
 	if err != nil {
+		fmt.Printf("[kubeflow] Failed build the image: %s", string(output))
 		return "", err
 	}
 
