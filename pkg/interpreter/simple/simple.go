@@ -18,9 +18,9 @@ type Interpreter struct {
 // New returns a new interpreter.
 func New() *Interpreter {
 	return &Interpreter{
-		FrameworkPrefix: "%kubeflow framework=",
-		WorkerPrefix:    "%kubeflow worker=",
-		PSPrefix:        "%kubeflow ps=",
+		FrameworkPrefix: "%framework=",
+		WorkerPrefix:    "%worker=",
+		PSPrefix:        "%ps=",
 	}
 }
 
