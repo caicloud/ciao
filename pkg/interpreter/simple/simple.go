@@ -13,6 +13,7 @@ type Interpreter struct {
 	FrameworkPrefix string
 	WorkerPrefix    string
 	PSPrefix        string
+	MasterPrefix    string
 }
 
 // New returns a new interpreter.
@@ -21,6 +22,7 @@ func New() *Interpreter {
 		FrameworkPrefix: "%framework=",
 		WorkerPrefix:    "%worker=",
 		PSPrefix:        "%ps=",
+		MasterPrefix:    "%master=",
 	}
 }
 
@@ -52,6 +54,11 @@ func (i Interpreter) parseMagicCommand(param *types.Parameter, line string) erro
 		}
 	} else if strings.Contains(line, i.PSPrefix) {
 		param.PSCount, err = strconv.Atoi(line[len(i.PSPrefix):])
+		if err != nil {
+			return err
+		}
+	} else if strings.Contains(line, i.MasterPrefix) {
+		param.MasterCount, err = strconv.Atoi(line[len(i.MasterPrefix):])
 		if err != nil {
 			return err
 		}

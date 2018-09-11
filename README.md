@@ -21,13 +21,24 @@ Please see the [Demo Show](./docs/demo.md).
 
 There are some magic commands supported by Ciao:
 
-- `%kubeflow framework={framework that you want to use}` This command defines which framework will be used. Currently we only support tensorflow.
-- `%kubeflow ps={number of ps}` This command defines how many parameter servers you want to create.
-- `%kubeflow worker={number of workers}` This command defines how many workers you want to create.
+```
+%framework=tensorflow
+%ps={number}
+%worker={number}
+```
+
+or
+
+```
+%framework=pytorch
+%master={number}
+%worker={number}
+```
 
 ### Examples
 
-- [Distributed Training with Ciao](./docs/examples/example.ipynb)
+- [Distributed Training using TensorFlow](./docs/examples/example.ipynb)
+- [Distributed Training using PyTorch](./docs/examples/example.ipynb)
 
 ## Installation
 

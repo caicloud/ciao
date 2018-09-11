@@ -7,9 +7,9 @@ In this demo, we will show how to create a distributed traning in Jupyter Notebo
 The code in the cell is:
 
 ```python
-%kubeflow framework=tensorflow
-%kubeflow ps=1
-%kubeflow worker=1
+%framework=tensorflow
+%ps=1
+%worker=1
 
 from __future__ import absolute_import
 from __future__ import division

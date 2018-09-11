@@ -41,7 +41,7 @@ func (m Manager) Execute(code string) (*types.Job, error) {
 
 	preprocessedCode := m.Interpreter.PreprocessedCode(code)
 	// Build and get the image from source code.
-	image, err := m.GetImage(preprocessedCode, parameter.GenerateName)
+	image, err := m.GetImage(preprocessedCode, parameter)
 	if err != nil {
 		return nil, err
 	}
@@ -57,9 +57,9 @@ func (m Manager) Execute(code string) (*types.Job, error) {
 }
 
 // GetImage gets the image by the given code.
-func (m Manager) GetImage(code, jobName string) (string, error) {
+func (m Manager) GetImage(code string, parameter *types.Parameter) (string, error) {
 	fmt.Println("[kubeflow] Building the Docker image...")
-	imageName, err := m.S2IClient.SourceToImage(code, jobName)
+	imageName, err := m.S2IClient.SourceToImage(code, parameter)
 	if err != nil {
 		return "", err
 	}
