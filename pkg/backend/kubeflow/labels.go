@@ -16,10 +16,13 @@ const (
 
 // GetLabelSelectorForJob gets label selector for the given job.
 func GetLabelSelectorForJob(job *types.Job) string {
-	if job.Framework == types.FrameworkTypeTensorFlow {
+	switch job.Framework {
+	case types.FrameworkTypeTensorFlow:
 		return fmt.Sprintf("%s=%s", labelTFJobName, job.Name)
+		case types.FrameworkTypePyTorch
+	default:
+		return "-1"
 	}
-	return "-1"
 }
 
 // GetReplicaInstanceForPod gets the instance name of the given pod.

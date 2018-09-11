@@ -1,11 +1,12 @@
 package types
 
 // Parameter is the type for the parameter of the job.
-// TODO: Add more configs.
 type Parameter struct {
-	Framework    FrameworkType
-	PSCount      int
-	WorkerCount  int
+	Framework   FrameworkType
+	PSCount     int
+	WorkerCount int
+	// MasterCount is for PyTorchJob.
+	MasterCount  int
 	GenerateName string
 	Image        string
 }
@@ -15,7 +16,9 @@ type Job struct {
 	Framework FrameworkType
 	Name      string
 	PS        int
-	Worker    int
+	// Master is for PyTorchJob.
+	Master int
+	Worker int
 }
 
 // FrameworkType is the type for types of the frameworks.
@@ -24,4 +27,6 @@ type FrameworkType string
 const (
 	// FrameworkTypeTensorFlow defines tensorflow type.
 	FrameworkTypeTensorFlow = "tensorflow"
+	// FrameworkTypePyTorch defines tensorflow type.
+	FrameworkTypePyTorch = "pytorch"
 )
