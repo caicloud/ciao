@@ -49,9 +49,9 @@ func run(cmd *cobra.Command, args []string) {
 
 	interpreter := simpleinterpreter.New()
 
-	manager := manager.New(kubeflowBackend, s2iClient, interpreter)
+	mgr := manager.New(kubeflowBackend, s2iClient, interpreter)
 
-	kernel := kernel.New(version.ProtocolVersion, version.Version, connectionFile, manager)
+	kernel := kernel.New(version.ProtocolVersion, version.Version, connectionFile, mgr)
 
 	log.Println("Running Kubeflow kernel for Jupyter...")
 	kernel.RunKernel()
