@@ -26,6 +26,13 @@ Then we need to create a configuration file `$HOME/.ciao/config.yaml`:
 kubeconfig: {path to your kubeconfig}
 ```
 
+## Install S2I Builder Image
+
+For better performance, we recommend pulling the builder images from Docker Registry ahead of time. There are two builder images for different ML frameworks:
+
+- `gaocegege/tensorflow-s2i:1.10.1-py3`
+- `gaocegege/pytorch-s2i:v0.2`
+
 ## Run the Kernel
 
 First, we need to set the environment variable `KUBECONFIG` to tell the kernel where to find the kubeconfig:
