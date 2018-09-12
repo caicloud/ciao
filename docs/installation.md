@@ -24,14 +24,25 @@ Then we need to create a configuration file `$HOME/.ciao/config.yaml`:
 
 ```yaml
 kubeconfig: {path to your kubeconfig}
+s2i:
+  provider: {img or s2i}
 ```
 
-## Install S2I Builder Image
+There are two options about tools to convert the source code in Jupyter Notebook to Docker image:
+
+- [img](https://github.com/genuinetools/img) (Recommended), which is a daemon-free tool to build and push Docker images.
+- [s2i](https://github.com/openshift/source-to-image), which is a source to image tool.
+
+## Install Image
 
 For better performance, we recommend pulling the builder images from Docker Registry ahead of time. There are two builder images for different ML frameworks:
 
 - `gaocegege/tensorflow-s2i:1.10.1-py3`
 - `gaocegege/pytorch-s2i:v0.2`
+- `tensorflow/tensorflow:1.10.1-py3`
+- `pytorch/pytorch:v0.2`
+
+Or the time of the first run will be extremely long (which depends on your network).
 
 ## Run the Kernel
 
