@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:0.4_cuda9_cudnn7
+FROM pytorch/pytorch:v0.2
 
 LABEL maintainer="Kubeflow"
 
