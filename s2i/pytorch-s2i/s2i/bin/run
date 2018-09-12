@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+set -e
+
+echo " -----> Running code..."
+python /app/code.py

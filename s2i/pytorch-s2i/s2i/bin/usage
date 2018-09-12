@@ -1,0 +1,9 @@
+#!/bin/bash -e
+cat <<EOF
+This is the Kubeflow S2I image for TensorFlow:
+To use it, install S2I: https://github.com/openshift/source-to-image
+Sample invocation:
+s2i build test/test-app tensorflow-s2i tensorflow-s2i-app
+You can then run the resulting image via:
+docker run tensorflow-s2i-app
+EOF

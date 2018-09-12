@@ -8,9 +8,13 @@ import (
 	"github.com/caicloud/ciao/pkg/types"
 )
 
+const (
+	defaultContainerNameTF = "tensorflow"
+)
+
 func (b Backend) createTFJob(parameter *types.Parameter) (*types.Job, error) {
 	tfJob := generateTFJob(parameter)
-	tfJob, err := b.KubeflowClient.KubeflowV1alpha2().TFJobs(namespaceDefault).Create(tfJob)
+	tfJob, err := b.TFJobClient.KubeflowV1alpha2().TFJobs(namespaceDefault).Create(tfJob)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +46,7 @@ func generateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
 						Spec: v1.PodSpec{
 							Containers: []v1.Container{
 								v1.Container{
-									Name:  "tensorflow",
+									Name:  defaultContainerNameTF,
 									Image: parameter.Image,
 								},
 							},
@@ -55,7 +59,7 @@ func generateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
 						Spec: v1.PodSpec{
 							Containers: []v1.Container{
 								v1.Container{
-									Name:  "tensorflow",
+									Name:  defaultContainerNameTF,
 									Image: parameter.Image,
 								},
 							},

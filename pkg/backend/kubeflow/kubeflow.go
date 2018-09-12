@@ -7,7 +7,8 @@ import (
 	"sync"
 	"time"
 
-	kubeflowclient "github.com/kubeflow/tf-operator/pkg/client/clientset/versioned"
+	pyttorchjobclient "github.com/kubeflow/pytorch-operator/pkg/client/clientset/versioned"
+	tfjobclient "github.com/kubeflow/tf-operator/pkg/client/clientset/versioned"
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	kubeclient "k8s.io/client-go/kubernetes"
@@ -25,13 +26,14 @@ const (
 
 // Backend is the type for kubeflow backend.
 type Backend struct {
-	KubeflowClient kubeflowclient.Interface
-	K8sClient      kubeclient.Interface
+	TFJobClient      tfjobclient.Interface
+	PyTorchJobClient pyttorchjobclient.Interface
+	K8sClient        kubeclient.Interface
 }
 
 // New returns a new Backend.
 func New(config *restclientset.Config) (*Backend, error) {
-	kubeflowClient, err := kubeflowclient.NewForConfig(restclientset.AddUserAgent(config, userAgent))
+	tfJobClient, err := tfjobclient.NewForConfig(restclientset.AddUserAgent(config, userAgent))
 	if err != nil {
 		return nil, err
 	}
@@ -39,10 +41,15 @@ func New(config *restclientset.Config) (*Backend, error) {
 	if err != nil {
 		return nil, err
 	}
+	pytorchClient, err := pyttorchjobclient.NewForConfig(restclientset.AddUserAgent(config, userAgent))
+	if err != nil {
+		return nil, err
+	}
 
 	return &Backend{
-		KubeflowClient: kubeflowClient,
-		K8sClient:      k8sClient,
+		TFJobClient:      tfJobClient,
+		K8sClient:        k8sClient,
+		PyTorchJobClient: pytorchClient,
 	}, nil
 }
 
@@ -74,8 +81,8 @@ func (b *Backend) GetLogs(job *types.Job) {
 		if err != nil {
 			fmt.Printf("[kubeflow] Failed to get pods for the given job %s\n", job.Name)
 		}
-		if len(pods.Items) != job.PS+job.Worker {
-			fmt.Printf("[kubeflow] Wating for %d PS and %d workers\n", job.PS, job.Worker)
+		if len(pods.Items) != job.PS+job.Worker+job.Master {
+			fmt.Printf("[kubeflow] Waiting for all replicas (%d, %d, %d)\n", job.Master, job.PS, job.Worker)
 			time.Sleep(queryInterval)
 
 			if retry == retryTime {
@@ -96,6 +103,7 @@ func (b *Backend) GetLogs(job *types.Job) {
 		go b.getLogForPod(job, pod, wg)
 	}
 	wg.Wait()
+	fmt.Printf("[kubeflow] Finished\n")
 	return
 }
 

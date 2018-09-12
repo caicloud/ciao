@@ -164,6 +164,19 @@
   version = "1.0.1"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/kubeflow/pytorch-operator"
+  packages = [
+    "pkg/apis/pytorch/v1alpha1",
+    "pkg/apis/pytorch/v1alpha2",
+    "pkg/client/clientset/versioned",
+    "pkg/client/clientset/versioned/scheme",
+    "pkg/client/clientset/versioned/typed/kubeflow/v1alpha1",
+    "pkg/client/clientset/versioned/typed/kubeflow/v1alpha2"
+  ]
+  revision = "84d07df149ae389d005bb59beefa308198b8e8bc"
+
+[[projects]]
   name = "github.com/kubeflow/tf-operator"
   packages = [
     "pkg/apis/tensorflow/v1alpha1",
@@ -478,6 +491,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "26fc762bee6065fe5bdef34e4617ad4185c446e076aa921ac4f96593c503cc19"
+  inputs-digest = "9660ee505a7545ed93499c8237dc239de0f59dc9bb19b0499cfb59bdc9a7ed1c"
   solver-name = "gps-cdcl"
   solver-version = 1
