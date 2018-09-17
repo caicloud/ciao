@@ -37,8 +37,8 @@ or
 
 ### Examples
 
-- [Distributed Training using TensorFlow](./docs/examples/example.ipynb)
-- [Distributed Training using PyTorch](./docs/examples/example.ipynb)
+- [Distributed Training using TensorFlow](./docs/examples/tensorflow/example.ipynb)
+- [Distributed Training using PyTorch](./docs/examples/tensorflow/example.ipynb)
 
 ## Installation
 
