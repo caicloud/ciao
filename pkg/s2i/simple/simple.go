@@ -15,8 +15,7 @@ const (
 	codeFile            = "code.py"
 	builderImageTF      = "gaocegege/tensorflow-s2i:1.10.1-py3"
 	builderImagePyTorch = "gaocegege/pytorch-s2i:v0.2"
-	// builderImagePyTorch = "gaocegege/pytorch-s2i:0.4_cuda9_cudnn7"
-	imageOwner = "caicloud"
+	imageOwner          = "caicloud"
 )
 
 // S2IClient is the type for using s2i.
@@ -47,7 +46,7 @@ func (s S2IClient) SourceToImage(code string, parameter *types.Parameter) (strin
 	cmd.Dir = dir
 	output, err := cmd.Output()
 	if err != nil {
-		fmt.Printf("[kubeflow] Failed build the image: %s", string(output))
+		fmt.Printf("[kubeflow] Failed to build the image: %s", string(output))
 		return "", err
 	}
 

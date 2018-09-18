@@ -52,4 +52,3 @@ Please see the [Design Document](./docs/design.md) to know the architecture of C
 
 - Thank [kubeflow/kubeflow](https://github.com/kubeflow/kubeflow) for the awesome operators which supports TensorFlow/PyTorch and many other ML frameworks on Kubernetes.
 - Thank [gopherdata/gophernotes](https://github.com/gopherdata/gophernotes) for the reference implementation of Jupyter Kernel in Golang.
-- Thank [openshift/source-to-image](https://github.com/openshift/source-to-image) for the tool to convert source code to Docker image directly.
