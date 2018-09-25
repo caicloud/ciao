@@ -14,22 +14,42 @@ const (
 	prefix     = "kubeflow-kernel-code."
 	codeFile   = "code.py"
 	dockerFile = "Dockerfile"
-	imageOwner = "gaocegege"
 )
 
 // Client is the type for using img.
 type Client struct {
+	Registry string
+	Username string
 }
 
 // New creates a new Client.
-func New() *Client {
-	return &Client{}
+func New(registry, username, password string) (*Client, error) {
+	c := &Client{
+		Registry: registry,
+		Username: username,
+	}
+	if err := c.login(registry, username, password); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
+func (c Client) login(registry, username, password string) error {
+	if username == "" || password == "" {
+		return fmt.Errorf("[kubeflow] Username or password missed")
+	}
+	cmd := exec.Command("img", "login", "-u", username, "-p", password, registry)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Printf("[kubeflow] Failed to login %s for the registry %s: %s", username, registry, string(output))
+	}
+	return err
 }
 
 // SourceToImage converts the code to the image.
 func (c Client) SourceToImage(code string, parameter *types.Parameter) (string, error) {
 	// This is a hack to let kubernetes do not pull from docker registry.
-	imageName := fmt.Sprintf("%s:v1", filepath.Join(imageOwner, parameter.GenerateName))
+	imageName := fmt.Sprintf("%s:v1", filepath.Join(c.Username, parameter.GenerateName))
 
 	dir, err := ioutil.TempDir(os.TempDir(), prefix)
 	if err != nil {

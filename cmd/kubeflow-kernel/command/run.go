@@ -74,7 +74,7 @@ func createS2IClient(s2iConfig map[string]string) (s2i.Interface, error) {
 	case config.S2IProviderS2I:
 		return simples2i.New(), nil
 	case config.S2IProviderImg:
-		return imgs2i.New(), nil
+		return imgs2i.New(s2iConfig[config.S2IRegistry], s2iConfig[config.S2IUsername], s2iConfig[config.S2IPassword])
 	default:
 		return nil, fmt.Errorf("Failed to find the provider %s", s2iConfig[config.S2IProvider])
 	}
