@@ -66,7 +66,7 @@ func (c Client) SourceToImage(code string, parameter *types.Parameter) (string, 
 	}
 
 	cmd := exec.Command("img", "build", "-t", imageName, dir)
-	output, err := cmd.Output()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Printf("[kubeflow] Failed to build the image: %s", string(output))
 		return "", err
@@ -74,7 +74,7 @@ func (c Client) SourceToImage(code string, parameter *types.Parameter) (string, 
 
 	fmt.Printf("[kubeflow] Pushing the image...\n")
 	cmd = exec.Command("img", "push", imageName)
-	output, err = cmd.Output()
+	output, err = cmd.CombinedOutput()
 	if err != nil {
 		fmt.Printf("[kubeflow] Failed to push the image: %s", string(output))
 		return "", err

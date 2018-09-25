@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "docker",
+    "run",
+    "--privileged",
+    "--network",
+    "host",
+    "-v",
+    "/var/run/kubernetes/admin.kubeconfig:/var/run/kubernetes/admin.kubeconfig",
+    "-v",
+    "/run/user/1000/jupyter/:/run/user/1000/jupyter/",
+    "caicloud/ciao:latest",
+    "run",
+    "--connection-file",
+    "{connection_file}"
+  ],
+  "display_name": "Kubeflow-Python3 (Dockerized)",
+  "language": "Python 3"
+}

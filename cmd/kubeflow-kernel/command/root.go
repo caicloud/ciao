@@ -36,10 +36,10 @@ func init() {
 func initConfig() {
 	if cfgFile != "" { // enable ability to specify config file via flag
 		viper.SetConfigFile(cfgFile)
+	} else {
+		viper.SetConfigName("config")      // name of config file (without extension)
+		viper.AddConfigPath("$HOME/.ciao") // adding home directory as first search path
 	}
-
-	viper.SetConfigName("config")      // name of config file (without extension)
-	viper.AddConfigPath("$HOME/.ciao") // adding home directory as first search path
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
