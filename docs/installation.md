@@ -2,6 +2,8 @@
 
 ## Dockerized Kernel
 
+Dockerized kernel is designed to run the kernel remotely, if you are interested in the implementation, please see the [design document](./design.md).
+
 ### Requirements
 
 - Jupyter Notebook v4.4.0 or above (We do not test other versions now.)
@@ -13,12 +15,15 @@
 Update `./hack/config.yaml`:
 
 ```
-kubeconfig: /var/run/kubernetes/admin.kubeconfig
+kubeconfig: {kubeconfig}
 s2i:
   provider: img
-  username: <input-your-username>
-  password: <input-your-pwd>
+  username: {input-your-username}
+  password: {input-your-pwd}
+  registry: {input-your-registry}
 ```
+
+If you choose `img` or `s2i` to provide the functionality of converting source code to image, `username` and `password` are necessary to push the image to the Docker registry. `registry` is optional, default to `https://index.docker.io/v1/`.
 
 ### Build the Docker Image
 
@@ -28,12 +33,36 @@ Run the command:
 docker build -t caicloud/ciao .
 ```
 
-### Install Dockerized kernel
+### Install [nb2kg](https://github.com/jupyter/nb2kg)
+
+Jupyter Notebook Extension to Kernel Gateway (nb2kg) is used to communicate with the kernel in the docker image, please install the package using the command:
+
+```
+pip install nb2kg
+```
+
+Then enable it:
+
+```
+jupyter serverextension enable --py nb2kg --sys-prefix
+```
+
+### Run the kernel
 
 Run the command:
 
 ```
-./hack/install-dockerized.sh
+docker run -v {kubeconfig}:{kubeconfig} -p 8889:8889 caicloud/ciao
+```
+
+Then you could run the notebook with nb2kg extension:
+
+```
+export KG_URL=http://127.0.0.1:8889
+jupyter notebook \
+  --NotebookApp.session_manager_class=nb2kg.managers.SessionManager \
+  --NotebookApp.kernel_manager_class=nb2kg.managers.RemoteKernelManager \
+  --NotebookApp.kernel_spec_manager_class=nb2kg.managers.RemoteKernelSpecManager
 ```
 
 ## Native
@@ -94,4 +123,8 @@ First, we need to set the environment variable `KUBECONFIG` to tell the kernel w
 export KUBECONFIG={path to your kubeconfig}
 ```
 
-Then run Jupyter Notebook or Lab, choose Kubeflow kernel.
+Then run Jupyter Notebook or Lab, choose Kubeflow kernel:
+
+```
+jupyter notebook
+```

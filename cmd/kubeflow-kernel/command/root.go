@@ -39,10 +39,15 @@ func initConfig() {
 	} else {
 		viper.SetConfigName("config")      // name of config file (without extension)
 		viper.AddConfigPath("$HOME/.ciao") // adding home directory as first search path
+		viper.AddConfigPath(".")           // look for config in the working directory
+		viper.AddConfigPath("/etc/ciao/")
 	}
 
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalf("Failed to read the config: %v", err)
+	} else {
 		log.Println("Using config file:", viper.ConfigFileUsed())
 	}
 }

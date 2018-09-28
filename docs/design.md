@@ -6,7 +6,7 @@ Ciao is a Jupyter kernel, and doesn’t know anything about the notebook documen
 
 The logic about the communication between Jupyter and Ciao is mostly copied from [gopherdata/gophernotes](https://github.com/gopherdata/gophernotes). Here we do not document how the kernel talks with Jupyter server via ZeroMQ, we mainly focus on how Ciao handles execution requests from Jupyter server.
 
-## Handle Requests
+## Handle requests
 
 There are three phases in Ciao:
 
@@ -31,3 +31,25 @@ S2IClient converts source code to Docker image. There are some tools to achieve 
 ### Backend
 
 Backend is the structure for Kubeflow and Kubernetes. We maintain Kubernetes Client and Kubeflow client in the backend and use them to create and watch resources. You can get the definition of Backend here: [pkg/backend/types.go](https://github.com/caicloud/ciao/blob/master/pkg/backend/types.go).
+
+## Workflow
+
+### Native kernel
+
+If you want to run the kernel locally, you can refer to the workflow. In this mode, jupyter notebook server process manages Ciao. When the users in the notebook choose Ciao, Ciao will be spawned as a standalone process, then the notebook will use Ciao to run the code.
+
+<div align="center">
+	<img src="./images/native.png" alt="Native Kernel Mode" width="500">
+</div>
+
+### Remote kernel (Dockerized)
+
+If you want to run the kernel in a remote server, you can refer to the workflow. In this mode, jupyter notebook server does not talk to Ciao directly. It uses [nb2kg][] to communicate with [jupyter kernel gateway](https://github.com/jupyter/kernel_gateway) through HTTPS or Websocket. [nb2kg][] overrides the `/api/kernels/*` and `/api/kernelspecs` request handlers of the Notebook server, and proxies all requests for these resources to the Gateway.
+
+<div align="center">
+	<img src="./images/remote.png" alt="Remote Kernel Mode" width="500">
+</div>
+
+The kernel gateway and Ciao are packaged in the Docker image, a port (default to `8889`) needs to be exposed in the container. Then the notebook can proxy all requests about kernel to the gateway.
+
+[nb2kg]: https://github.com/jupyter/nb2kg

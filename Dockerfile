@@ -47,13 +47,25 @@ RUN apk add --no-cache \
     shadow \
     shadow-uidmap \
     strace \
-    zeromq
+    zeromq \
+    gcc \
+    g++ \
+    python \
+    python-dev \
+    py-pip \
+    musl-dev
+
+# install the kernel gateway
+RUN pip install jupyter_kernel_gateway
 
 COPY --from=img /usr/bin/img /usr/bin/img
 COPY --from=runc /usr/bin/runc /usr/bin/runc
 COPY --from=build-env /usr/bin/kubeflow-kernel /usr/bin/kubeflow-kernel
 
-COPY ./hack/config.yaml /root/.ciao/config.yaml
+COPY ./hack/config.yaml /etc/ciao/config.yaml
+COPY ./artifacts /usr/share/jupyter/kernels/kubeflow
 
-ENTRYPOINT [ "kubeflow-kernel" ]
-CMD [ "--help" ]
+# run kernel gateway on container start, not notebook server
+EXPOSE 8889
+ENTRYPOINT [ "jupyter", "kernelgateway" ]
+CMD ["--KernelGatewayApp.ip=0.0.0.0", "--KernelGatewayApp.port=8889", "--JupyterWebsocketPersonality.list_kernels=True", "--log-level=DEBUG"]
