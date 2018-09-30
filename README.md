@@ -1,4 +1,4 @@
-# Ciao - Kernel for Kubelow in Jupyter Notebook
+# Ciao - Kernel for Kubeflow in Jupyter Notebook
 
 Ciao is still in early development -- it is not feature-complete or production-ready. Please try our experimental kernel and give us your feedback.
 
