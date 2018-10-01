@@ -25,6 +25,8 @@ s2i:
 
 If you choose `img` or `s2i` to provide the functionality of converting source code to image, `username` and `password` are necessary to push the image to the Docker registry. `registry` is optional, default to `https://index.docker.io/v1/`.
 
+If you choose `configmap`, then no need to input the `username`, `password` and `registry`. The code will be mounted into the pod with the help of [ConfigMap](https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#create-a-configmap). Thus we recommend using `configmap` as s2i provider.
+
 ### Build the Docker Image
 
 Run the command:

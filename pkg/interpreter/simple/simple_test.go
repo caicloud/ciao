@@ -16,9 +16,9 @@ func TestPreprocess(t *testing.T) {
 	}
 	testCases := []TestCase{
 		TestCase{
-			Code: `%kubeflow framework=tensorflow
-%kubeflow ps=1
-%kubeflow worker=1
+			Code: `%framework=tensorflow
+%ps=1
+%worker=1
 some code here.
 `,
 			Expected: &types.Parameter{
@@ -28,8 +28,8 @@ some code here.
 			},
 		},
 		TestCase{
-			Code: `%kubeflow framework=tensorflow
-%kubeflow ps=1
+			Code: `%framework=tensorflow
+%ps=1
 some code here.
 `,
 			Expected: &types.Parameter{
@@ -38,8 +38,8 @@ some code here.
 			},
 		},
 		TestCase{
-			Code: `%kubeflow framework=tensorflow
-%kubeflow ps=1`,
+			Code: `%framework=tensorflow
+%ps=1`,
 			Expected: &types.Parameter{
 				Framework: types.FrameworkTypeTensorFlow,
 				PSCount:   1,
@@ -67,9 +67,9 @@ func TestGetPreProcessedCode(t *testing.T) {
 	}
 	testCases := []TestCase{
 		TestCase{
-			Code: `%kubeflow framework=tensorflow
-%kubeflow ps=1
-%kubeflow worker=1
+			Code: `%framework=tensorflow
+%ps=1
+%worker=1
 some code here.
 `,
 			Expected: `
