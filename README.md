@@ -1,5 +1,9 @@
 # Ciao - Kernel for Kubeflow in Jupyter Notebook
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/caicloud/ciao)](https://goreportcard.com/report/github.com/caicloud/ciao)
+[![Build Status](https://travis-ci.org/caicloud/ciao.svg?branch=master)](https://travis-ci.org/caicloud/ciao)
+[![Coverage Status](https://coveralls.io/repos/github/caicloud/ciao/badge.svg?branch=master)](https://coveralls.io/github/caicloud/ciao?branch=master)
+
 Ciao is still in early development -- it is not feature-complete or production-ready. Please try our experimental kernel and give us your feedback.
 
 - Report bugs to [Ciao Issues](https://github.com/caicloud/ciao/issues)
