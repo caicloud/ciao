@@ -92,7 +92,7 @@ func (b *Backend) ExecCode(parameter *types.Parameter) (*types.Job, error) {
 // GetLogs outputs logs for the given job.
 func (b *Backend) GetLogs(job *types.Job) {
 	var pods *v1.PodList
-	var wg sync.WaitGroup
+	var wg *sync.WaitGroup
 	var err error
 
 	fmt.Printf("[kubeflow] Getting %s Job %s\n", job.Framework, job.Name)
@@ -131,7 +131,7 @@ func (b *Backend) GetLogs(job *types.Job) {
 	return
 }
 
-func (b Backend) getLogForPod(job *types.Job, pod v1.Pod, wg sync.WaitGroup) {
+func (b Backend) getLogForPod(job *types.Job, pod v1.Pod, wg *sync.WaitGroup) {
 	var readCloser io.ReadCloser
 	var err error
 
@@ -176,8 +176,12 @@ func (b Backend) getLogForPod(job *types.Job, pod v1.Pod, wg sync.WaitGroup) {
 	}
 	fmt.Printf("[kubeflow][%s] Begin reading the log...\n", instanceName)
 
-	defer readCloser.Close()
-	defer wg.Done()
+	defer func() {
+		if err := readCloser.Close(); err != nil {
+			fmt.Printf("[kubeflow] Failed to close the readCloser: %v", err)
+		}
+		wg.Done()
+	}()
 
 	reader := bufio.NewReader(readCloser)
 
