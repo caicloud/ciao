@@ -34,6 +34,7 @@ before_install:
 install:
   - dep ensure
   - gometalinter --install
+  - go build github.com/caicloud/ciao/cmd/kubeflow-kernel
 
 script:
   - gometalinter --config=linter_config.json --vendor ./...
