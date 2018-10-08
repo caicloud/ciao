@@ -21,6 +21,12 @@ const (
 	kernelIdle     = "idle"
 )
 
+var (
+	// ExecCounter is incremented each time we run user code in the notebook.
+	// It cannot be defined in Kernel struct, or it will be always 1.
+	ExecCounter = 0
+)
+
 // Kernel is a kubeflow kernel.
 type Kernel struct {
 	// ProtocolVersion defines the Jupyter protocol version.
@@ -28,9 +34,7 @@ type Kernel struct {
 	// Version defines the gophernotes version.
 	Version        string
 	ConnectionFile string
-	// ExecCounter is incremented each time we run user code in the notebook.
-	ExecCounter int
-	Manager     *manager.Manager
+	Manager        *manager.Manager
 }
 
 // New creates a new kernel instance.
@@ -39,7 +43,6 @@ func New(protocolVersion, version, connectionFile string, manager *manager.Manag
 		ProtocolVersion: protocolVersion,
 		Version:         version,
 		ConnectionFile:  connectionFile,
-		ExecCounter:     0,
 		Manager:         manager,
 	}
 }
@@ -193,15 +196,15 @@ func (k Kernel) handleExecuteRequest(receipt msgReceipt) error {
 	silent := reqcontent["silent"].(bool)
 
 	if !silent {
-		k.ExecCounter++
+		ExecCounter++
 	}
 
 	// Prepare the map that will hold the reply content.
 	content := make(map[string]interface{})
-	content["execution_count"] = k.ExecCounter
+	content["execution_count"] = ExecCounter
 
 	// Tell the front-end what the kernel is about to execute.
-	if err := receipt.PublishExecutionInput(k.ExecCounter, code); err != nil {
+	if err := receipt.PublishExecutionInput(ExecCounter, code); err != nil {
 		log.Printf("Error publishing execution input: %v\n", err)
 	}
 
@@ -259,7 +262,7 @@ func (k Kernel) handleExecuteRequest(receipt msgReceipt) error {
 
 		if !silent && len(data.Data) != 0 {
 			// Publish the result of the execution.
-			if err := receipt.PublishExecutionResult(k.ExecCounter, data); err != nil {
+			if err := receipt.PublishExecutionResult(ExecCounter, data); err != nil {
 				log.Printf("Error publishing execution result: %v\n", err)
 			}
 		}
@@ -284,7 +287,7 @@ func (k Kernel) doEval(code string) (val []interface{}, err error) {
 	job, err := k.Manager.Execute(code)
 	if err != nil {
 		fmt.Printf("Failed to create job: %v", err)
-		return nil, err
+		return nil, nil
 	}
 	fmt.Printf("Job %s is created.", job.Name)
 	return val, nil
