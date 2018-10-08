@@ -106,7 +106,7 @@ func (b *Backend) ExecCode(parameter *types.Parameter) (*types.Job, error) {
 // GetLogs outputs logs for the given job.
 func (b *Backend) GetLogs(job *types.Job) {
 	var pods *v1.PodList
-	var wg *sync.WaitGroup
+	var wg sync.WaitGroup
 	var err error
 
 	fmt.Printf("[kubeflow] Getting %s Job %s\n", job.Framework, job.Name)
@@ -138,7 +138,7 @@ func (b *Backend) GetLogs(job *types.Job) {
 
 	wg.Add(len(pods.Items))
 	for _, pod := range pods.Items {
-		go b.getLogForPod(job, pod, wg)
+		go b.getLogForPod(job, pod, &wg)
 	}
 	wg.Wait()
 	fmt.Printf("[kubeflow] Finished\n")
