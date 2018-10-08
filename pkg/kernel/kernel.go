@@ -23,7 +23,7 @@ const (
 
 var (
 	// ExecCounter is incremented each time we run user code in the notebook.
-	// It cannot be defined in Kernel, or it will be always 1.
+	// It cannot be defined in Kernel struct, or it will be always 1.
 	ExecCounter = 0
 )
 
