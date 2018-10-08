@@ -16,7 +16,10 @@ package manager
 
 import (
 	"fmt"
-
+	"log"
+	"os"
+	"io/ioutil"
+	 metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"github.com/caicloud/ciao/pkg/backend"
 	"github.com/caicloud/ciao/pkg/interpreter"
 	"github.com/caicloud/ciao/pkg/s2i"
@@ -25,6 +28,7 @@ import (
 
 const (
 	jobNamePrefix = "jupyter-kernel"
+	namespaceFile = "/var/run/secrets/kubernetes.io/serviceaccount/namespace"
 )
 
 // Manager is the type for the manager.
@@ -55,6 +59,20 @@ func (m Manager) Execute(code string) (*types.Job, error) {
 
 	preprocessedCode := m.Interpreter.PreprocessedCode(code)
 	// Build and get the image from source code.
+	namespace := metav1.NamespaceDefault
+
+	if _, err := os.Stat(namespaceFile); !os.IsNotExist(err) {
+		b, err := ioutil.ReadFile(namespaceFile) // just pass the file name
+		if err != nil {
+			fmt.Print(err)
+		}
+		namespace = string(b)
+		log.Printf("Read namespace '%s'\n", namespace)
+	} else {
+		log.Printf("No namespace file '%s'\n", namespace)
+	}
+	parameter.Namespace = namespace
+	
 	image, err := m.GetImage(preprocessedCode, parameter)
 	if err != nil {
 		return nil, err
@@ -66,7 +84,8 @@ func (m Manager) Execute(code string) (*types.Job, error) {
 	if err != nil {
 		return nil, err
 	}
-	m.Backend.GetLogs(job)
+	m.Backend.GetLogs(parameter, job)
+	m.S2IClient.Cleanup(parameter)
 	return job, nil
 }
 

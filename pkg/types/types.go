@@ -23,6 +23,7 @@ type Parameter struct {
 	MasterCount  int
 	GenerateName string
 	Image        string
+	Namespace    string
 }
 
 // Job is the type for general jobs (PyTorchJob, TFJob).

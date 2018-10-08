@@ -17,7 +17,7 @@ package command
 import (
 	"fmt"
 	"log"
-
+	"os"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	restclientset "k8s.io/client-go/rest"
@@ -52,6 +52,10 @@ func init() {
 
 func run(cmd *cobra.Command, args []string) {
 	kubeConfig := viper.GetString(config.KubeConfig)
+	if _, err := os.Stat(kubeConfig); os.IsNotExist(err) {
+		log.Printf("Blanking out kubeconfig: %s\n", kubeConfig)
+		kubeConfig = ""
+	}
 
 	// Get kubernetes config.
 	kcfg, err := clientcmd.BuildConfigFromFlags("", kubeConfig)

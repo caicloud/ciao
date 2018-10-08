@@ -16,6 +16,7 @@ package simple
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 
@@ -34,9 +35,9 @@ type Interpreter struct {
 func New() *Interpreter {
 	return &Interpreter{
 		FrameworkPrefix: "%framework=",
-		WorkerPrefix:    "%worker=",
-		PSPrefix:        "%ps=",
-		MasterPrefix:    "%master=",
+		WorkerPrefix:    "kf_worker=",
+		PSPrefix:        "kf_ps=",
+		MasterPrefix:    "kf_master=",
 	}
 }
 
@@ -45,10 +46,11 @@ func (i Interpreter) Preprocess(code string) (*types.Parameter, error) {
 	param := &types.Parameter{}
 	lines := strings.Split(code, "\n")
 	for _, line := range lines {
-		if len(line) == 0 {
+		if len(line) < 3 {
 			continue
 		}
-		if string(line[0]) == "%" {
+		log.Printf("Processing line: %s\n", line)
+		if string(line[0:3]) == "kf_" {
 			if err := i.parseMagicCommand(param, line); err != nil {
 				return nil, err
 			}
@@ -59,9 +61,8 @@ func (i Interpreter) Preprocess(code string) (*types.Parameter, error) {
 
 func (i Interpreter) parseMagicCommand(param *types.Parameter, line string) error {
 	var err error
-	if strings.Contains(line, i.FrameworkPrefix) {
-		param.Framework = types.FrameworkType(line[len(i.FrameworkPrefix):])
-	} else if strings.Contains(line, i.WorkerPrefix) {
+	param.Framework = types.FrameworkTypeTensorFlow
+	if strings.Contains(line, i.WorkerPrefix) {
 		param.WorkerCount, err = strconv.Atoi(line[len(i.WorkerPrefix):])
 		if err != nil {
 			return err

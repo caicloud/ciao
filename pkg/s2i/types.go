@@ -21,4 +21,5 @@ import (
 // Interface is the interface for s2i.
 type Interface interface {
 	SourceToImage(code string, parameter *types.Parameter) (string, error)
+	Cleanup(parameter *types.Parameter) (error)
 }

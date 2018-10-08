@@ -79,3 +79,7 @@ func getBuilderImage(parameter *types.Parameter) string {
 		return "-1"
 	}
 }
+
+func (s S2IClient) Cleanup(parameter *types.Parameter) (error) {
+	return nil
+}

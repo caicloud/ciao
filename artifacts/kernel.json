@@ -1,10 +1,12 @@
 {
   "argv": [
     "kubeflow-kernel",
+    "--config",
+    "/var/config.yaml",  
     "run",
     "--connection-file",
     "{connection_file}"
   ],
-  "display_name": "Kubeflow-Python3",
-  "language": "Python 3"
+  "display_name": "Kubeflow-Python2",
+  "language": "Python 2"
 }

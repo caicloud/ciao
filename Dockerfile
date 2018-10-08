@@ -1,12 +1,10 @@
 ARG RUNC_VERSION=9f9c96235cc97674e935002fc3d78361b696a69e
 
-FROM golang:1.10-alpine AS build-env
+FROM docker.artifactory-test.corp.linkedin.com/golang:1.10.3 AS build-env
 
-RUN apk add --no-cache \
-    zeromq-dev \
-    zeromq \
-    gcc \
-    musl-dev
+RUN yum install -y zeromq
+RUN yum install -y zeromq-devel
+RUN yum install -y gcc g++ musl-devel
 
 ADD . /go/src/github.com/caicloud/ciao
 WORKDIR /go/src/github.com/caicloud/ciao
@@ -38,25 +36,16 @@ RUN git clone https://github.com/genuinetools/img.git "$GOPATH/src/github.com/ge
     && cd "$GOPATH/src/github.com/genuinetools/img" \
     && make static && mv img /usr/bin/img
 
-FROM alpine:3.7
-MAINTAINER Ce Gao <gaoce@caicloud.io>
+FROM docker.artifactory-test.corp.linkedin.com/tensorflow/lipy-relevance-image-hdfs:0.1.404
+MAINTAINER ashahab
 
-RUN apk add --no-cache \
-    bash \
-    git \
-    shadow \
-    shadow-uidmap \
-    strace \
-    zeromq \
-    gcc \
-    g++ \
-    python \
-    python-dev \
-    py-pip \
-    musl-dev
 
 # install the kernel gateway
-RUN pip install jupyter_kernel_gateway
+# RUN python $(which pip) install jupyter_kernel_gateway
+
+
+RUN yum install -y zeromq
+RUN yum install -y shadow-utils
 
 COPY --from=img /usr/bin/img /usr/bin/img
 COPY --from=runc /usr/bin/runc /usr/bin/runc
@@ -65,7 +54,13 @@ COPY --from=build-env /usr/bin/kubeflow-kernel /usr/bin/kubeflow-kernel
 COPY ./hack/config.yaml /etc/ciao/config.yaml
 COPY ./artifacts /usr/share/jupyter/kernels/kubeflow
 
+COPY ./hack/config.yaml /var/config.yaml
+COPY ./artifacts /usr/local/share/jupyter/kernels/kubeflow
+RUN runc --version
+RUN img version
+RUN kubeflow-kernel --help
+ENV USER=jovyan
 # run kernel gateway on container start, not notebook server
-EXPOSE 8889
-ENTRYPOINT [ "jupyter", "kernelgateway" ]
-CMD ["--KernelGatewayApp.ip=0.0.0.0", "--KernelGatewayApp.port=8889", "--JupyterWebsocketPersonality.list_kernels=True", "--log-level=DEBUG"]
+# EXPOSE 8889
+# ENTRYPOINT [ "jupyter", "kernelgateway" ]
+# CMD ["--KernelGatewayApp.ip=0.0.0.0", "--KernelGatewayApp.port=8889", "--JupyterWebsocketPersonality.list_kernels=True", "--log-level=DEBUG"]

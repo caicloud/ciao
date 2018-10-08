@@ -106,3 +106,7 @@ func (c Client) writeDockerfile(dir string, parameter *types.Parameter) error {
 	}
 	return ioutil.WriteFile(filepath.Join(dir, dockerFile), []byte(template), 0666)
 }
+
+func (s Client) Cleanup(parameter *types.Parameter) (error) {
+	return nil
+}

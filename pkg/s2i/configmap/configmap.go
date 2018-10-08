@@ -50,13 +50,21 @@ func (c Client) SourceToImage(code string, parameter *types.Parameter) (string, 
 	cm := &v1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      parameter.GenerateName,
-			Namespace: metav1.NamespaceDefault,
+			Namespace: parameter.Namespace,
 		},
 		Data: map[string]string{
 			FileName: code,
 		},
 	}
 
-	created, err := c.K8sClient.CoreV1().ConfigMaps(metav1.NamespaceDefault).Create(cm)
+	created, err := c.K8sClient.CoreV1().ConfigMaps(parameter.Namespace).Create(cm)
 	return created.Name, err
+}
+
+// SourceToImage converts the code to the image.
+func (c Client) Cleanup(parameter *types.Parameter) (error) {
+	deleteOptions := &metav1.DeleteOptions{
+	}
+	err := c.K8sClient.CoreV1().ConfigMaps(parameter.Namespace).Delete(parameter.GenerateName, deleteOptions)
+	return err
 }

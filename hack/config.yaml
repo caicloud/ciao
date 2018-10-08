@@ -1,3 +1,3 @@
-kubeconfig: /var/run/kubernetes/admin.kubeconfig
+kubeconfig: /var/run/kubernetes/tensorflow.corp-ltx1.kubeconfig
 s2i:
   provider: configmap
