@@ -21,6 +21,8 @@ Ciao's goal is to simplify the machine learning workflow using Kubeflow. Current
 
 Please see the [Demo Show](./docs/demo.md).
 
+![Ciao and SOS integration](./docs/images/ciao-sos-integration.gif)
+
 ### Usage
 
 There are some magic commands supported by Ciao:
