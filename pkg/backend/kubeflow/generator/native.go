@@ -25,11 +25,14 @@ import (
 
 // Native is the type for native generator.
 type Native struct {
+	Namespace string
 }
 
 // New returns a new native generator.
-func NewNative() *Native {
-	return &Native{}
+func NewNative(namespace string) *Native {
+	return &Native{
+		Namespace: namespace,
+	}
 }
 
 // GenerateTFJob generates a new TFJob.
@@ -43,7 +46,7 @@ func (n Native) GenerateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      parameter.GenerateName,
-			Namespace: metav1.NamespaceDefault,
+			Namespace: n.Namespace,
 		},
 		Spec: tfv1alpha2.TFJobSpec{
 			TFReplicaSpecs: map[tfv1alpha2.TFReplicaType]*tfv1alpha2.TFReplicaSpec{
@@ -89,7 +92,7 @@ func (n Native) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1alpha2.
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      parameter.GenerateName,
-			Namespace: metav1.NamespaceDefault,
+			Namespace: n.Namespace,
 		},
 		Spec: pytorchv1alpha2.PyTorchJobSpec{
 			PyTorchReplicaSpecs: map[pytorchv1alpha2.PyTorchReplicaType]*pytorchv1alpha2.PyTorchReplicaSpec{

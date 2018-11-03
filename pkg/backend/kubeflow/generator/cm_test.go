@@ -23,8 +23,12 @@ import (
 	"github.com/caicloud/ciao/pkg/types"
 )
 
+const (
+	defaultNamespace = "default"
+)
+
 func TestCMNewTFJob(t *testing.T) {
-	cm := NewCM()
+	cm := NewCM(defaultNamespace)
 
 	expectedPSCount := 1
 	expectedWorkerCount := 1
@@ -52,7 +56,7 @@ func TestCMNewTFJob(t *testing.T) {
 }
 
 func TestCMNewPyTorchJob(t *testing.T) {
-	cm := NewCM()
+	cm := NewCM(defaultNamespace)
 
 	expectedMasterCount := 1
 	expectedWorkerCount := 1

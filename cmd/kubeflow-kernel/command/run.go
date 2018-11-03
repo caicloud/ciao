@@ -59,17 +59,24 @@ func run(cmd *cobra.Command, args []string) {
 		log.Fatalf("Error building kubeConfig: %s\n", err.Error())
 	}
 
+	namespace := viper.GetString(config.Namespace)
+	if namespace == "" {
+		// Set the default namespace to "default".
+		namespace = "default"
+	}
+	log.Printf("Use the namespace %s", namespace)
+
 	s2iConfig := viper.GetStringMapString(config.S2I)
 	if s2iConfig == nil {
 		log.Fatalf("Error creating s2i client: Failed to find the config\n")
 	}
 
-	kubeflowBackend, err := createBackend(s2iConfig, kcfg)
+	kubeflowBackend, err := createBackend(s2iConfig, kcfg, namespace)
 	if err != nil {
 		log.Fatalf("Error building kubeflow backend: %s\n", err.Error())
 	}
 
-	s2iClient, err := createS2IClient(s2iConfig, kcfg)
+	s2iClient, err := createS2IClient(s2iConfig, kcfg, namespace)
 	if err != nil {
 		log.Fatalf("Error creating s2i client: %s\n", err.Error())
 	}
@@ -84,24 +91,24 @@ func run(cmd *cobra.Command, args []string) {
 	ciao.RunKernel()
 }
 
-func createS2IClient(s2iConfig map[string]string, kubeconfig *restclientset.Config) (s2i.Interface, error) {
+func createS2IClient(s2iConfig map[string]string, kubeconfig *restclientset.Config, namespace string) (s2i.Interface, error) {
 	switch s2iConfig[config.S2IProvider] {
 	case config.S2IProviderS2I:
 		return simples2i.New(), nil
 	case config.S2IProviderImg:
 		return imgs2i.New(s2iConfig[config.S2IRegistry], s2iConfig[config.S2IUsername], s2iConfig[config.S2IPassword])
 	case config.S2IProviderCM:
-		return configs2i.New(kubeconfig)
+		return configs2i.New(kubeconfig, namespace)
 	default:
 		return nil, fmt.Errorf("Failed to find the provider %s", s2iConfig[config.S2IProvider])
 	}
 }
 
-func createBackend(s2iConfig map[string]string, kubeconfig *restclientset.Config) (backend.Interface, error) {
+func createBackend(s2iConfig map[string]string, kubeconfig *restclientset.Config, namespace string) (backend.Interface, error) {
 	switch s2iConfig[config.S2IProvider] {
 	case config.S2IProviderCM:
-		return kubeflowbackend.NewWithCM(kubeconfig)
+		return kubeflowbackend.NewWithCM(kubeconfig, namespace)
 	default:
-		return kubeflowbackend.New(kubeconfig)
+		return kubeflowbackend.New(kubeconfig, namespace)
 	}
 }

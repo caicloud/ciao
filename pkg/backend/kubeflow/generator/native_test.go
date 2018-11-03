@@ -24,7 +24,7 @@ import (
 )
 
 func TestNewTFJob(t *testing.T) {
-	cm := NewNative()
+	cm := NewNative(defaultNamespace)
 
 	expectedPSCount := 1
 	expectedWorkerCount := 1
@@ -52,7 +52,7 @@ func TestNewTFJob(t *testing.T) {
 }
 
 func TestNewPyTorchJob(t *testing.T) {
-	cm := NewNative()
+	cm := NewNative(defaultNamespace)
 
 	expectedMasterCount := 1
 	expectedWorkerCount := 1

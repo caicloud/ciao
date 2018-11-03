@@ -15,7 +15,10 @@
 package config
 
 const (
-	KubeConfig     = "kubeconfig"
+	KubeConfig = "kubeconfig"
+
+	Namespace = "namespace"
+
 	S2I            = "s2i"
 	S2IProvider    = "provider"
 	S2IProviderS2I = "s2i"

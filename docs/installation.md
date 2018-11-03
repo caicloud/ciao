@@ -94,6 +94,7 @@ Then we need to create a configuration file `$HOME/.ciao/config.yaml`:
 
 ```yaml
 kubeconfig: {path to your kubeconfig}
+namespace: {Kubernetes namespace to create resources (TFJob, ConfigMap and so on), please make sure that the namespace exists in Kubernetes}
 s2i:
   provider: {img or s2i}
   registry: {registry to be used to push images, optional}

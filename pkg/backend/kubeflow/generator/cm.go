@@ -33,11 +33,14 @@ const (
 
 // CM is the type for CM generator.
 type CM struct {
+	Namespace string
 }
 
 // NewCM returns a new CM generator.
-func NewCM() *CM {
-	return &CM{}
+func NewCM(namespace string) *CM {
+	return &CM{
+		Namespace: namespace,
+	}
 }
 
 // GenerateTFJob generates a new TFJob.
@@ -54,7 +57,7 @@ func (c CM) GenerateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      parameter.GenerateName,
-			Namespace: metav1.NamespaceDefault,
+			Namespace: c.Namespace,
 		},
 		Spec: tfv1alpha2.TFJobSpec{
 			TFReplicaSpecs: map[tfv1alpha2.TFReplicaType]*tfv1alpha2.TFReplicaSpec{
@@ -147,7 +150,7 @@ func (c CM) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1alpha2.PyTo
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      parameter.GenerateName,
-			Namespace: metav1.NamespaceDefault,
+			Namespace: c.Namespace,
 		},
 		Spec: pytorchv1alpha2.PyTorchJobSpec{
 			PyTorchReplicaSpecs: map[pytorchv1alpha2.PyTorchReplicaType]*pytorchv1alpha2.PyTorchReplicaSpec{
