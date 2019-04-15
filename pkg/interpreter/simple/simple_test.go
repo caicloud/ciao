@@ -29,7 +29,7 @@ func TestPreprocess(t *testing.T) {
 		Expected *types.Parameter
 	}
 	testCases := []TestCase{
-		TestCase{
+		{
 			Code: `%framework=tensorflow
 %ps=1
 %worker=1
@@ -41,7 +41,7 @@ some code here.
 				WorkerCount: 1,
 			},
 		},
-		TestCase{
+		{
 			Code: `%framework=tensorflow
 %ps=1
 some code here.
@@ -51,12 +51,45 @@ some code here.
 				PSCount:   1,
 			},
 		},
-		TestCase{
+		{
 			Code: `%framework=tensorflow
 %ps=1`,
 			Expected: &types.Parameter{
 				Framework: types.FrameworkTypeTensorFlow,
 				PSCount:   1,
+			},
+		},
+		{
+			Code: `%framework=tensorflow
+%cleanpolicy=Running`,
+			Expected: &types.Parameter{
+				Framework: types.FrameworkTypeTensorFlow,
+				CleanPolicy: types.CleanPodPolicyRunning,
+			},
+		},
+		{
+			Code: `%framework=tensorflow
+%cleanpolicy=All`,
+			Expected: &types.Parameter{
+				Framework: types.FrameworkTypeTensorFlow,
+				CleanPolicy: types.CleanPodPolicyAll,
+			},
+		},
+		{
+			Code: `%framework=tensorflow
+%cleanpolicy=None`,
+			Expected: &types.Parameter{
+				Framework: types.FrameworkTypeTensorFlow,
+				CleanPolicy: types.CleanPodPolicyNone,
+			},
+		},
+		{
+			// Invalid clean policy will use default value None.
+			Code: `%framework=tensorflow
+%cleanpolicy=test`,
+			Expected: &types.Parameter{
+				Framework: types.FrameworkTypeTensorFlow,
+				CleanPolicy: types.CleanPodPolicyNone,
 			},
 		},
 	}

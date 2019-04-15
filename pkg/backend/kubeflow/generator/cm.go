@@ -47,6 +47,7 @@ func NewCM(namespace string) *CM {
 func (c CM) GenerateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
 	psCount := int32(parameter.PSCount)
 	workerCount := int32(parameter.WorkerCount)
+	cleanPodPolicy := tfv1alpha2.CleanPodPolicy(parameter.CleanPolicy)
 
 	mountPath := fmt.Sprintf("/%s", parameter.Image)
 	filename := fmt.Sprintf("/%s/%s", parameter.Image, s2iconfigmap.FileName)
@@ -60,13 +61,14 @@ func (c CM) GenerateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
 			Namespace: c.Namespace,
 		},
 		Spec: tfv1alpha2.TFJobSpec{
+			CleanPodPolicy: &cleanPodPolicy,
 			TFReplicaSpecs: map[tfv1alpha2.TFReplicaType]*tfv1alpha2.TFReplicaSpec{
-				tfv1alpha2.TFReplicaTypePS: &tfv1alpha2.TFReplicaSpec{
+				tfv1alpha2.TFReplicaTypePS: {
 					Replicas: &psCount,
 					Template: v1.PodTemplateSpec{
 						Spec: v1.PodSpec{
 							Containers: []v1.Container{
-								v1.Container{
+								{
 									Name:  defaultContainerNameTF,
 									Image: baseImageTF,
 									Command: []string{
@@ -74,7 +76,7 @@ func (c CM) GenerateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
 										filename,
 									},
 									VolumeMounts: []v1.VolumeMount{
-										v1.VolumeMount{
+										{
 											Name:      parameter.Image,
 											MountPath: mountPath,
 										},
@@ -82,7 +84,7 @@ func (c CM) GenerateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
 								},
 							},
 							Volumes: []v1.Volume{
-								v1.Volume{
+								{
 									Name: parameter.Image,
 									VolumeSource: v1.VolumeSource{
 										ConfigMap: &v1.ConfigMapVolumeSource{
@@ -96,12 +98,12 @@ func (c CM) GenerateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
 						},
 					},
 				},
-				tfv1alpha2.TFReplicaTypeWorker: &tfv1alpha2.TFReplicaSpec{
+				tfv1alpha2.TFReplicaTypeWorker: {
 					Replicas: &workerCount,
 					Template: v1.PodTemplateSpec{
 						Spec: v1.PodSpec{
 							Containers: []v1.Container{
-								v1.Container{
+								{
 									Name:  defaultContainerNameTF,
 									Image: baseImageTF,
 									Command: []string{
@@ -109,7 +111,7 @@ func (c CM) GenerateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
 										filename,
 									},
 									VolumeMounts: []v1.VolumeMount{
-										v1.VolumeMount{
+										{
 											Name:      parameter.Image,
 											MountPath: mountPath,
 										},
@@ -117,7 +119,7 @@ func (c CM) GenerateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
 								},
 							},
 							Volumes: []v1.Volume{
-								v1.Volume{
+								{
 									Name: parameter.Image,
 									VolumeSource: v1.VolumeSource{
 										ConfigMap: &v1.ConfigMapVolumeSource{
@@ -140,6 +142,7 @@ func (c CM) GenerateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
 func (c CM) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1alpha2.PyTorchJob {
 	masterCount := int32(parameter.MasterCount)
 	workerCount := int32(parameter.WorkerCount)
+	cleanPodPolicy := pytorchv1alpha2.CleanPodPolicy(parameter.CleanPolicy)
 
 	mountPath := fmt.Sprintf("/%s", parameter.Image)
 	filename := fmt.Sprintf("/%s/%s", parameter.Image, s2iconfigmap.FileName)
@@ -153,13 +156,14 @@ func (c CM) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1alpha2.PyTo
 			Namespace: c.Namespace,
 		},
 		Spec: pytorchv1alpha2.PyTorchJobSpec{
+			CleanPodPolicy: &cleanPodPolicy,
 			PyTorchReplicaSpecs: map[pytorchv1alpha2.PyTorchReplicaType]*pytorchv1alpha2.PyTorchReplicaSpec{
-				pytorchv1alpha2.PyTorchReplicaTypeMaster: &pytorchv1alpha2.PyTorchReplicaSpec{
+				pytorchv1alpha2.PyTorchReplicaTypeMaster: {
 					Replicas: &masterCount,
 					Template: v1.PodTemplateSpec{
 						Spec: v1.PodSpec{
 							Containers: []v1.Container{
-								v1.Container{
+								{
 									Name:  defaultContainerNamePyTorch,
 									Image: baseImagePyTorch,
 									Command: []string{
@@ -167,7 +171,7 @@ func (c CM) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1alpha2.PyTo
 										filename,
 									},
 									VolumeMounts: []v1.VolumeMount{
-										v1.VolumeMount{
+										{
 											Name:      parameter.Image,
 											MountPath: mountPath,
 										},
@@ -175,7 +179,7 @@ func (c CM) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1alpha2.PyTo
 								},
 							},
 							Volumes: []v1.Volume{
-								v1.Volume{
+								{
 									Name: parameter.Image,
 									VolumeSource: v1.VolumeSource{
 										ConfigMap: &v1.ConfigMapVolumeSource{
@@ -189,12 +193,12 @@ func (c CM) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1alpha2.PyTo
 						},
 					},
 				},
-				pytorchv1alpha2.PyTorchReplicaTypeWorker: &pytorchv1alpha2.PyTorchReplicaSpec{
+				pytorchv1alpha2.PyTorchReplicaTypeWorker: {
 					Replicas: &workerCount,
 					Template: v1.PodTemplateSpec{
 						Spec: v1.PodSpec{
 							Containers: []v1.Container{
-								v1.Container{
+								{
 									Name:  defaultContainerNamePyTorch,
 									Image: baseImagePyTorch,
 									Command: []string{
@@ -202,7 +206,7 @@ func (c CM) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1alpha2.PyTo
 										filename,
 									},
 									VolumeMounts: []v1.VolumeMount{
-										v1.VolumeMount{
+										{
 											Name:      parameter.Image,
 											MountPath: mountPath,
 										},
@@ -210,7 +214,7 @@ func (c CM) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1alpha2.PyTo
 								},
 							},
 							Volumes: []v1.Volume{
-								v1.Volume{
+								{
 									Name: parameter.Image,
 									VolumeSource: v1.VolumeSource{
 										ConfigMap: &v1.ConfigMapVolumeSource{

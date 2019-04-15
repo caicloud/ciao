@@ -33,17 +33,20 @@ func TestCMNewTFJob(t *testing.T) {
 	expectedPSCount := 1
 	expectedWorkerCount := 1
 	expectedCM := "image"
+	expectedCleanPolicy := types.CleanPodPolicyAll
 
 	param := &types.Parameter{
 		PSCount:     expectedPSCount,
 		WorkerCount: expectedWorkerCount,
 		Image:       expectedCM,
+		CleanPolicy: types.CleanPodPolicyAll,
 	}
 
 	tfJob := cm.GenerateTFJob(param)
 	actualPSCount := *tfJob.Spec.TFReplicaSpecs[tfv1alpha2.TFReplicaTypePS].Replicas
 	actualWorkerCount := *tfJob.Spec.TFReplicaSpecs[tfv1alpha2.TFReplicaTypeWorker].Replicas
 	actualCM := tfJob.Spec.TFReplicaSpecs[tfv1alpha2.TFReplicaTypePS].Template.Spec.Containers[0].VolumeMounts[0].Name
+	actualCleanPolicy := *tfJob.Spec.CleanPodPolicy
 	if actualPSCount != int32(expectedPSCount) {
 		t.Errorf("Expected %d ps, got %d", expectedPSCount, actualPSCount)
 	}
@@ -53,6 +56,9 @@ func TestCMNewTFJob(t *testing.T) {
 	if actualCM != expectedCM {
 		t.Errorf("Expected configmap name %s, got %s", expectedCM, actualCM)
 	}
+	if actualCleanPolicy != tfv1alpha2.CleanPodPolicy(expectedCleanPolicy) {
+		t.Errorf("Expected clean policy %s, got %s", expectedCleanPolicy, actualCleanPolicy)
+	}
 }
 
 func TestCMNewPyTorchJob(t *testing.T) {
@@ -61,17 +67,20 @@ func TestCMNewPyTorchJob(t *testing.T) {
 	expectedMasterCount := 1
 	expectedWorkerCount := 1
 	expectedCM := "image"
+	expectedCleanPolicy := types.CleanPodPolicyAll
 
 	param := &types.Parameter{
 		MasterCount: expectedMasterCount,
 		WorkerCount: expectedWorkerCount,
 		Image:       expectedCM,
+		CleanPolicy: types.CleanPodPolicyAll,
 	}
 
 	pytorchJob := cm.GeneratePyTorchJob(param)
 	actualMasterCount := *pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1alpha2.PyTorchReplicaTypeMaster].Replicas
 	actualWorkerCount := *pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1alpha2.PyTorchReplicaTypeWorker].Replicas
 	actualCM := pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1alpha2.PyTorchReplicaTypeMaster].Template.Spec.Containers[0].VolumeMounts[0].Name
+	actualCleanPolicy := *pytorchJob.Spec.CleanPodPolicy
 	if actualMasterCount != int32(expectedMasterCount) {
 		t.Errorf("Expected %d masters, got %d", expectedMasterCount, actualMasterCount)
 	}
@@ -80,5 +89,8 @@ func TestCMNewPyTorchJob(t *testing.T) {
 	}
 	if actualCM != expectedCM {
 		t.Errorf("Expected configmap name %s, got %s", expectedCM, actualCM)
+	}
+	if actualCleanPolicy != pytorchv1alpha2.CleanPodPolicy(expectedCleanPolicy) {
+		t.Errorf("Expected clean policy %s, got %s", expectedCleanPolicy, actualCleanPolicy)
 	}
 }
