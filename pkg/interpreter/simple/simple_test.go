@@ -61,7 +61,7 @@ some code here.
 		},
 		{
 			Code: `%framework=tensorflow
-%cleanpolicy=Running`,
+%cleanPolicy=running`,
 			Expected: &types.Parameter{
 				Framework: types.FrameworkTypeTensorFlow,
 				CleanPolicy: types.CleanPodPolicyRunning,
@@ -69,7 +69,7 @@ some code here.
 		},
 		{
 			Code: `%framework=tensorflow
-%cleanpolicy=All`,
+%cleanPolicy=all`,
 			Expected: &types.Parameter{
 				Framework: types.FrameworkTypeTensorFlow,
 				CleanPolicy: types.CleanPodPolicyAll,
@@ -77,16 +77,16 @@ some code here.
 		},
 		{
 			Code: `%framework=tensorflow
-%cleanpolicy=None`,
+%cleanPolicy=none`,
 			Expected: &types.Parameter{
 				Framework: types.FrameworkTypeTensorFlow,
 				CleanPolicy: types.CleanPodPolicyNone,
 			},
 		},
 		{
-			// Invalid clean policy will use default value None.
+			// Invalid clean policy will use default value none.
 			Code: `%framework=tensorflow
-%cleanpolicy=test`,
+%cleanPolicy=test`,
 			Expected: &types.Parameter{
 				Framework: types.FrameworkTypeTensorFlow,
 				CleanPolicy: types.CleanPodPolicyNone,

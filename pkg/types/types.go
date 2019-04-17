@@ -48,7 +48,7 @@ const (
 
 // CleanPodPolicy describes how to deal with pods when the job is finished.
 const (
-	CleanPodPolicyAll       string = "All"
-	CleanPodPolicyRunning   string = "Running"
-	CleanPodPolicyNone      string = "None"
+	CleanPodPolicyAll       string = "all"
+	CleanPodPolicyRunning   string = "running"
+	CleanPodPolicyNone      string = "none"
 )

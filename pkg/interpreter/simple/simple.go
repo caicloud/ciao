@@ -38,7 +38,7 @@ func New() *Interpreter {
 		WorkerPrefix:      "%worker=",
 		PSPrefix:          "%ps=",
 		MasterPrefix:      "%master=",
-		CleanPolicyPrefix: "%cleanpolicy=",
+		CleanPolicyPrefix: "%cleanPolicy=",
 	}
 }
 
