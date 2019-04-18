@@ -23,6 +23,7 @@ type Parameter struct {
 	MasterCount  int
 	GenerateName string
 	Image        string
+	CleanPolicy  string
 }
 
 // Job is the type for general jobs (PyTorchJob, TFJob).
@@ -41,6 +42,13 @@ type FrameworkType string
 const (
 	// FrameworkTypeTensorFlow defines tensorflow type.
 	FrameworkTypeTensorFlow = "tensorflow"
-	// FrameworkTypePyTorch defines tensorflow type.
+	// FrameworkTypePyTorch defines pytorch type.
 	FrameworkTypePyTorch = "pytorch"
+)
+
+// CleanPodPolicy describes how to deal with pods when the job is finished.
+const (
+	CleanPodPolicyAll       string = "all"
+	CleanPodPolicyRunning   string = "running"
+	CleanPodPolicyNone      string = "none"
 )

@@ -24,19 +24,21 @@ import (
 
 // Interpreter is the type for the simple interpreter.
 type Interpreter struct {
-	FrameworkPrefix string
-	WorkerPrefix    string
-	PSPrefix        string
-	MasterPrefix    string
+	FrameworkPrefix   string
+	WorkerPrefix      string
+	PSPrefix          string
+	MasterPrefix      string
+	CleanPolicyPrefix string
 }
 
 // New returns a new interpreter.
 func New() *Interpreter {
 	return &Interpreter{
-		FrameworkPrefix: "%framework=",
-		WorkerPrefix:    "%worker=",
-		PSPrefix:        "%ps=",
-		MasterPrefix:    "%master=",
+		FrameworkPrefix:   "%framework=",
+		WorkerPrefix:      "%worker=",
+		PSPrefix:          "%ps=",
+		MasterPrefix:      "%master=",
+		CleanPolicyPrefix: "%cleanPolicy=",
 	}
 }
 
@@ -59,24 +61,33 @@ func (i Interpreter) Preprocess(code string) (*types.Parameter, error) {
 
 func (i Interpreter) parseMagicCommand(param *types.Parameter, line string) error {
 	var err error
-	if strings.Contains(line, i.FrameworkPrefix) {
+	switch {
+	case strings.Contains(line, i.FrameworkPrefix):
 		param.Framework = types.FrameworkType(line[len(i.FrameworkPrefix):])
-	} else if strings.Contains(line, i.WorkerPrefix) {
+	case strings.Contains(line, i.WorkerPrefix):
 		param.WorkerCount, err = strconv.Atoi(line[len(i.WorkerPrefix):])
 		if err != nil {
 			return err
 		}
-	} else if strings.Contains(line, i.PSPrefix) {
+	case strings.Contains(line, i.PSPrefix):
 		param.PSCount, err = strconv.Atoi(line[len(i.PSPrefix):])
 		if err != nil {
 			return err
 		}
-	} else if strings.Contains(line, i.MasterPrefix) {
+	case strings.Contains(line, i.MasterPrefix):
 		param.MasterCount, err = strconv.Atoi(line[len(i.MasterPrefix):])
 		if err != nil {
 			return err
 		}
+	case strings.Contains(line, i.CleanPolicyPrefix):
+		// Set default clean pod policy to None.
+		param.CleanPolicy = types.CleanPodPolicyNone
+		policy := line[len(i.CleanPolicyPrefix):]
+		if policy == types.CleanPodPolicyAll || policy == types.CleanPodPolicyRunning {
+			param.CleanPolicy = policy
+		}
 	}
+
 	return nil
 }
 

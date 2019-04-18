@@ -31,6 +31,7 @@ There are some magic commands supported by Ciao:
 %framework=tensorflow
 %ps={number}
 %worker={number}
+%cleanPolicy=all/running/none
 ```
 
 or
@@ -39,6 +40,7 @@ or
 %framework=pytorch
 %master={number}
 %worker={number}
+%cleanPolicy=all/running/none
 ```
 
 ### Examples
