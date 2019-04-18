@@ -21,7 +21,6 @@ go_import_path: github.com/caicloud/ciao
 before_install:
   # get coveralls.io support
   - go get github.com/mattn/goveralls
-  - go get -u github.com/alecthomas/gometalinter
   - go get -u github.com/golang/dep/cmd/dep
   - wget https://github.com/zeromq/libzmq/releases/download/v4.2.2/zeromq-4.2.2.tar.gz
   - tar xvzf zeromq-4.2.2.tar.gz
@@ -33,11 +32,9 @@ before_install:
 
 install:
   - dep ensure
-  - gometalinter --install
   - go build github.com/caicloud/ciao/cmd/kubeflow-kernel
 
 script:
-  - gometalinter --config=linter_config.json --vendor ./...
   # We customize the build step because by default
   # Travis runs go test -v ./... which will include the vendor
   # directory.

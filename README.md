@@ -7,7 +7,7 @@
 Ciao is still in early development -- it is not feature-complete or production-ready. Please try our experimental kernel and give us your feedback.
 
 - Report bugs to [Ciao Issues](https://github.com/caicloud/ciao/issues)
-- Chat at the [Kubeflow Slack Channel](https://kubeflow.slack.com/messages/C7REE0EHK/) (Please @gaocegege to let us know)
+- Chat at the [Kubeflow Slack Channel](https://kubeflow.slack.com/messages/CJ01RLD7Y) (Please @gaocegege to let us know)
 
 ## Overview
 
