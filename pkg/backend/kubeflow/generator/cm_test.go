@@ -17,8 +17,9 @@ package generator
 import (
 	"testing"
 
-	pytorchv1alpha2 "github.com/kubeflow/pytorch-operator/pkg/apis/pytorch/v1alpha2"
-	tfv1alpha2 "github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1alpha2"
+	common "github.com/kubeflow/tf-operator/pkg/apis/common/v1beta2"
+	pytorchv1beta2 "github.com/kubeflow/pytorch-operator/pkg/apis/pytorch/v1beta2"
+	tfv1beta2 "github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1beta2"
 
 	"github.com/caicloud/ciao/pkg/types"
 )
@@ -43,9 +44,9 @@ func TestCMNewTFJob(t *testing.T) {
 	}
 
 	tfJob := cm.GenerateTFJob(param)
-	actualPSCount := *tfJob.Spec.TFReplicaSpecs[tfv1alpha2.TFReplicaTypePS].Replicas
-	actualWorkerCount := *tfJob.Spec.TFReplicaSpecs[tfv1alpha2.TFReplicaTypeWorker].Replicas
-	actualCM := tfJob.Spec.TFReplicaSpecs[tfv1alpha2.TFReplicaTypePS].Template.Spec.Containers[0].VolumeMounts[0].Name
+	actualPSCount := *tfJob.Spec.TFReplicaSpecs[tfv1beta2.TFReplicaTypePS].Replicas
+	actualWorkerCount := *tfJob.Spec.TFReplicaSpecs[tfv1beta2.TFReplicaTypeWorker].Replicas
+	actualCM := tfJob.Spec.TFReplicaSpecs[tfv1beta2.TFReplicaTypePS].Template.Spec.Containers[0].VolumeMounts[0].Name
 	actualCleanPolicy := *tfJob.Spec.CleanPodPolicy
 	if actualPSCount != int32(expectedPSCount) {
 		t.Errorf("Expected %d ps, got %d", expectedPSCount, actualPSCount)
@@ -56,7 +57,7 @@ func TestCMNewTFJob(t *testing.T) {
 	if actualCM != expectedCM {
 		t.Errorf("Expected configmap name %s, got %s", expectedCM, actualCM)
 	}
-	if actualCleanPolicy != tfv1alpha2.CleanPodPolicy(expectedCleanPolicy) {
+	if actualCleanPolicy != common.CleanPodPolicy(expectedCleanPolicy) {
 		t.Errorf("Expected clean policy %s, got %s", expectedCleanPolicy, actualCleanPolicy)
 	}
 }
@@ -77,9 +78,9 @@ func TestCMNewPyTorchJob(t *testing.T) {
 	}
 
 	pytorchJob := cm.GeneratePyTorchJob(param)
-	actualMasterCount := *pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1alpha2.PyTorchReplicaTypeMaster].Replicas
-	actualWorkerCount := *pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1alpha2.PyTorchReplicaTypeWorker].Replicas
-	actualCM := pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1alpha2.PyTorchReplicaTypeMaster].Template.Spec.Containers[0].VolumeMounts[0].Name
+	actualMasterCount := *pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1beta2.PyTorchReplicaTypeMaster].Replicas
+	actualWorkerCount := *pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1beta2.PyTorchReplicaTypeWorker].Replicas
+	actualCM := pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1beta2.PyTorchReplicaTypeMaster].Template.Spec.Containers[0].VolumeMounts[0].Name
 	actualCleanPolicy := *pytorchJob.Spec.CleanPodPolicy
 	if actualMasterCount != int32(expectedMasterCount) {
 		t.Errorf("Expected %d masters, got %d", expectedMasterCount, actualMasterCount)
@@ -90,7 +91,7 @@ func TestCMNewPyTorchJob(t *testing.T) {
 	if actualCM != expectedCM {
 		t.Errorf("Expected configmap name %s, got %s", expectedCM, actualCM)
 	}
-	if actualCleanPolicy != pytorchv1alpha2.CleanPodPolicy(expectedCleanPolicy) {
+	if actualCleanPolicy != common.CleanPodPolicy(expectedCleanPolicy) {
 		t.Errorf("Expected clean policy %s, got %s", expectedCleanPolicy, actualCleanPolicy)
 	}
 }
