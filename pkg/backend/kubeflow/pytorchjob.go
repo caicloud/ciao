@@ -20,7 +20,7 @@ import (
 
 func (b Backend) createPyTorchJob(parameter *types.Parameter) (*types.Job, error) {
 	pytorchJob := b.Generator.GeneratePyTorchJob(parameter)
-	pytorchJob, err := b.PyTorchJobClient.KubeflowV1alpha2().PyTorchJobs(b.Namespace).Create(pytorchJob)
+	pytorchJob, err := b.PyTorchJobClient.KubeflowV1beta2().PyTorchJobs(b.Namespace).Create(pytorchJob)
 	if err != nil {
 		return nil, err
 	}

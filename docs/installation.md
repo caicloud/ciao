@@ -73,7 +73,7 @@ jupyter notebook \
 
 - Jupyter Notebook v4.4.0 or above (We do not test other versions now.)
 - Kubernetes v1.9 or above
-- [Kubeflow](https://www.kubeflow.org/) v0.2 or above
+- [Kubeflow](https://www.kubeflow.org/) v0.4 or above
 - [S2I](https://github.com/openshift/source-to-image) v1.1.10 or above
 - [img](https://github.com/genuinetools/img)
 - Docker

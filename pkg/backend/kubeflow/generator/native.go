@@ -15,8 +15,9 @@
 package generator
 
 import (
-	pytorchv1alpha2 "github.com/kubeflow/pytorch-operator/pkg/apis/pytorch/v1alpha2"
-	tfv1alpha2 "github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1alpha2"
+	common "github.com/kubeflow/tf-operator/pkg/apis/common/v1beta2"
+	pytorchv1beta2 "github.com/kubeflow/pytorch-operator/pkg/apis/pytorch/v1beta2"
+	tfv1beta2 "github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1beta2"
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -36,23 +37,23 @@ func NewNative(namespace string) *Native {
 }
 
 // GenerateTFJob generates a new TFJob.
-func (n Native) GenerateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
+func (n Native) GenerateTFJob(parameter *types.Parameter) *tfv1beta2.TFJob {
 	psCount := int32(parameter.PSCount)
 	workerCount := int32(parameter.WorkerCount)
-	cleanPodPolicy := tfv1alpha2.CleanPodPolicy(parameter.CleanPolicy)
+	cleanPodPolicy := common.CleanPodPolicy(parameter.CleanPolicy)
 
-	return &tfv1alpha2.TFJob{
+	return &tfv1beta2.TFJob{
 		TypeMeta: metav1.TypeMeta{
-			Kind: tfv1alpha2.Kind,
+			Kind: tfv1beta2.Kind,
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      parameter.GenerateName,
 			Namespace: n.Namespace,
 		},
-		Spec: tfv1alpha2.TFJobSpec{
+		Spec: tfv1beta2.TFJobSpec{
 			CleanPodPolicy: &cleanPodPolicy,
-			TFReplicaSpecs: map[tfv1alpha2.TFReplicaType]*tfv1alpha2.TFReplicaSpec{
-				tfv1alpha2.TFReplicaTypePS: {
+			TFReplicaSpecs: map[tfv1beta2.TFReplicaType]*common.ReplicaSpec{
+				tfv1beta2.TFReplicaTypePS: {
 					Replicas: &psCount,
 					Template: v1.PodTemplateSpec{
 						Spec: v1.PodSpec{
@@ -65,7 +66,7 @@ func (n Native) GenerateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
 						},
 					},
 				},
-				tfv1alpha2.TFReplicaTypeWorker: {
+				tfv1beta2.TFReplicaTypeWorker: {
 					Replicas: &workerCount,
 					Template: v1.PodTemplateSpec{
 						Spec: v1.PodSpec{
@@ -84,23 +85,23 @@ func (n Native) GenerateTFJob(parameter *types.Parameter) *tfv1alpha2.TFJob {
 }
 
 // GeneratePyTorchJob generates a new PyTorchJob.
-func (n Native) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1alpha2.PyTorchJob {
+func (n Native) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1beta2.PyTorchJob {
 	masterCount := int32(parameter.MasterCount)
 	workerCount := int32(parameter.WorkerCount)
-	cleanPodPolicy := pytorchv1alpha2.CleanPodPolicy(parameter.CleanPolicy)
+	cleanPodPolicy := common.CleanPodPolicy(parameter.CleanPolicy)
 
-	return &pytorchv1alpha2.PyTorchJob{
+	return &pytorchv1beta2.PyTorchJob{
 		TypeMeta: metav1.TypeMeta{
-			Kind: pytorchv1alpha2.Kind,
+			Kind: pytorchv1beta2.Kind,
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      parameter.GenerateName,
 			Namespace: n.Namespace,
 		},
-		Spec: pytorchv1alpha2.PyTorchJobSpec{
+		Spec: pytorchv1beta2.PyTorchJobSpec{
 			CleanPodPolicy: &cleanPodPolicy,
-			PyTorchReplicaSpecs: map[pytorchv1alpha2.PyTorchReplicaType]*pytorchv1alpha2.PyTorchReplicaSpec{
-				pytorchv1alpha2.PyTorchReplicaTypeMaster: {
+			PyTorchReplicaSpecs: map[pytorchv1beta2.PyTorchReplicaType]*common.ReplicaSpec{
+				pytorchv1beta2.PyTorchReplicaTypeMaster: {
 					Replicas: &masterCount,
 					Template: v1.PodTemplateSpec{
 						Spec: v1.PodSpec{
@@ -113,7 +114,7 @@ func (n Native) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1alpha2.
 						},
 					},
 				},
-				pytorchv1alpha2.PyTorchReplicaTypeWorker: {
+				pytorchv1beta2.PyTorchReplicaTypeWorker: {
 					Replicas: &workerCount,
 					Template: v1.PodTemplateSpec{
 						Spec: v1.PodSpec{

@@ -20,7 +20,7 @@ import (
 
 func (b Backend) createTFJob(parameter *types.Parameter) (*types.Job, error) {
 	tfJob := b.Generator.GenerateTFJob(parameter)
-	tfJob, err := b.TFJobClient.KubeflowV1alpha2().TFJobs(b.Namespace).Create(tfJob)
+	tfJob, err := b.TFJobClient.KubeflowV1beta2().TFJobs(b.Namespace).Create(tfJob)
 	if err != nil {
 		return nil, err
 	}
