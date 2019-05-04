@@ -29,6 +29,7 @@ import (
 	simpleinterpreter "github.com/caicloud/ciao/pkg/interpreter/simple"
 	"github.com/caicloud/ciao/pkg/kernel"
 	"github.com/caicloud/ciao/pkg/manager"
+	"github.com/caicloud/ciao/pkg/resource"
 	"github.com/caicloud/ciao/pkg/s2i"
 	configs2i "github.com/caicloud/ciao/pkg/s2i/configmap"
 	imgs2i "github.com/caicloud/ciao/pkg/s2i/img"
@@ -71,6 +72,8 @@ func run(cmd *cobra.Command, args []string) {
 		log.Fatalf("Error creating s2i client: Failed to find the config\n")
 	}
 
+	res := createDefaultResource()
+
 	kubeflowBackend, err := createBackend(s2iConfig, kcfg, namespace)
 	if err != nil {
 		log.Fatalf("Error building kubeflow backend: %s\n", err.Error())
@@ -81,7 +84,7 @@ func run(cmd *cobra.Command, args []string) {
 		log.Fatalf("Error creating s2i client: %s\n", err.Error())
 	}
 
-	interpreter := simpleinterpreter.New()
+	interpreter := simpleinterpreter.New(res)
 
 	mgr := manager.New(kubeflowBackend, s2iClient, interpreter)
 
@@ -111,4 +114,23 @@ func createBackend(s2iConfig map[string]string, kubeconfig *restclientset.Config
 	default:
 		return kubeflowbackend.New(kubeconfig, namespace)
 	}
+}
+
+func createDefaultResource() resource.JobResource {
+	res := new(resource.JobResource)
+
+	if workerResource := viper.GetStringMapString(config.Worker); workerResource != nil {
+		res.WorkerCPU = workerResource[config.CPU]
+		res.WorkerMemory = workerResource[config.Memory]
+	}
+	if psResource := viper.GetStringMapString(config.PS); psResource != nil {
+		res.PSCPU = psResource[config.CPU]
+		res.PSMemory = psResource[config.Memory]
+	}
+	if masterResource := viper.GetStringMapString(config.Master); masterResource != nil {
+		res.MasterCPU = masterResource[config.CPU]
+		res.MasterMemory = masterResource[config.Memory]
+	}
+
+	return *res
 }

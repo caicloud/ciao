@@ -18,8 +18,8 @@ import (
 	"fmt"
 
 	s2iconfigmap "github.com/caicloud/ciao/pkg/s2i/configmap"
-	common "github.com/kubeflow/tf-operator/pkg/apis/common/v1beta2"
 	pytorchv1beta2 "github.com/kubeflow/pytorch-operator/pkg/apis/pytorch/v1beta2"
+	common "github.com/kubeflow/tf-operator/pkg/apis/common/v1beta2"
 	tfv1beta2 "github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1beta2"
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -45,10 +45,19 @@ func NewCM(namespace string) *CM {
 }
 
 // GenerateTFJob generates a new TFJob.
-func (c CM) GenerateTFJob(parameter *types.Parameter) *tfv1beta2.TFJob {
+func (c CM) GenerateTFJob(parameter *types.Parameter) (*tfv1beta2.TFJob, error) {
 	psCount := int32(parameter.PSCount)
 	workerCount := int32(parameter.WorkerCount)
 	cleanPodPolicy := common.CleanPodPolicy(parameter.CleanPolicy)
+
+	psResource, err := parameter.Resource.PSLimits()
+	if err != nil {
+		return nil, err
+	}
+	workerResource, err := parameter.Resource.WorkerLimits()
+	if err != nil {
+		return nil, err
+	}
 
 	mountPath := fmt.Sprintf("/%s", parameter.Image)
 	filename := fmt.Sprintf("/%s/%s", parameter.Image, s2iconfigmap.FileName)
@@ -75,6 +84,9 @@ func (c CM) GenerateTFJob(parameter *types.Parameter) *tfv1beta2.TFJob {
 									Command: []string{
 										"python",
 										filename,
+									},
+									Resources: v1.ResourceRequirements{
+										Limits: psResource,
 									},
 									VolumeMounts: []v1.VolumeMount{
 										{
@@ -111,6 +123,9 @@ func (c CM) GenerateTFJob(parameter *types.Parameter) *tfv1beta2.TFJob {
 										"python",
 										filename,
 									},
+									Resources: v1.ResourceRequirements{
+										Limits: workerResource,
+									},
 									VolumeMounts: []v1.VolumeMount{
 										{
 											Name:      parameter.Image,
@@ -136,14 +151,23 @@ func (c CM) GenerateTFJob(parameter *types.Parameter) *tfv1beta2.TFJob {
 				},
 			},
 		},
-	}
+	}, nil
 }
 
 // GeneratePyTorchJob generates a new PyTorchJob.
-func (c CM) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1beta2.PyTorchJob {
+func (c CM) GeneratePyTorchJob(parameter *types.Parameter) (*pytorchv1beta2.PyTorchJob, error) {
 	masterCount := int32(parameter.MasterCount)
 	workerCount := int32(parameter.WorkerCount)
 	cleanPodPolicy := common.CleanPodPolicy(parameter.CleanPolicy)
+
+	masterResource, err := parameter.Resource.MasterLimits()
+	if err != nil {
+		return nil, err
+	}
+	workerResource, err := parameter.Resource.WorkerLimits()
+	if err != nil {
+		return nil, err
+	}
 
 	mountPath := fmt.Sprintf("/%s", parameter.Image)
 	filename := fmt.Sprintf("/%s/%s", parameter.Image, s2iconfigmap.FileName)
@@ -170,6 +194,9 @@ func (c CM) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1beta2.PyTor
 									Command: []string{
 										"python",
 										filename,
+									},
+									Resources: v1.ResourceRequirements{
+										Limits: masterResource,
 									},
 									VolumeMounts: []v1.VolumeMount{
 										{
@@ -206,6 +233,9 @@ func (c CM) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1beta2.PyTor
 										"python",
 										filename,
 									},
+									Resources: v1.ResourceRequirements{
+										Limits: workerResource,
+									},
 									VolumeMounts: []v1.VolumeMount{
 										{
 											Name:      parameter.Image,
@@ -231,5 +261,5 @@ func (c CM) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1beta2.PyTor
 				},
 			},
 		},
-	}
+	}, nil
 }

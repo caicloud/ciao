@@ -37,10 +37,19 @@ func NewNative(namespace string) *Native {
 }
 
 // GenerateTFJob generates a new TFJob.
-func (n Native) GenerateTFJob(parameter *types.Parameter) *tfv1beta2.TFJob {
+func (n Native) GenerateTFJob(parameter *types.Parameter) (*tfv1beta2.TFJob, error) {
 	psCount := int32(parameter.PSCount)
 	workerCount := int32(parameter.WorkerCount)
 	cleanPodPolicy := common.CleanPodPolicy(parameter.CleanPolicy)
+
+	psResource, err := parameter.Resource.PSLimits()
+	if err != nil {
+		return nil, err
+	}
+	workerResource, err := parameter.Resource.WorkerLimits()
+	if err != nil {
+		return nil, err
+	}
 
 	return &tfv1beta2.TFJob{
 		TypeMeta: metav1.TypeMeta{
@@ -61,6 +70,9 @@ func (n Native) GenerateTFJob(parameter *types.Parameter) *tfv1beta2.TFJob {
 								{
 									Name:  defaultContainerNameTF,
 									Image: parameter.Image,
+									Resources: v1.ResourceRequirements{
+										Limits: psResource,
+									},
 								},
 							},
 						},
@@ -74,6 +86,9 @@ func (n Native) GenerateTFJob(parameter *types.Parameter) *tfv1beta2.TFJob {
 								{
 									Name:  defaultContainerNameTF,
 									Image: parameter.Image,
+									Resources: v1.ResourceRequirements{
+										Limits: workerResource,
+									},
 								},
 							},
 						},
@@ -81,14 +96,23 @@ func (n Native) GenerateTFJob(parameter *types.Parameter) *tfv1beta2.TFJob {
 				},
 			},
 		},
-	}
+	}, nil
 }
 
 // GeneratePyTorchJob generates a new PyTorchJob.
-func (n Native) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1beta2.PyTorchJob {
+func (n Native) GeneratePyTorchJob(parameter *types.Parameter) (*pytorchv1beta2.PyTorchJob, error) {
 	masterCount := int32(parameter.MasterCount)
 	workerCount := int32(parameter.WorkerCount)
 	cleanPodPolicy := common.CleanPodPolicy(parameter.CleanPolicy)
+
+	masterResource, err := parameter.Resource.MasterLimits()
+	if err != nil {
+		return nil, err
+	}
+	workerResource, err := parameter.Resource.WorkerLimits()
+	if err != nil {
+		return nil, err
+	}
 
 	return &pytorchv1beta2.PyTorchJob{
 		TypeMeta: metav1.TypeMeta{
@@ -109,6 +133,9 @@ func (n Native) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1beta2.P
 								{
 									Name:  defaultContainerNamePyTorch,
 									Image: parameter.Image,
+									Resources: v1.ResourceRequirements{
+										Limits: masterResource,
+									},
 								},
 							},
 						},
@@ -122,6 +149,9 @@ func (n Native) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1beta2.P
 								{
 									Name:  defaultContainerNamePyTorch,
 									Image: parameter.Image,
+									Resources: v1.ResourceRequirements{
+										Limits: workerResource,
+									},
 								},
 							},
 						},
@@ -129,5 +159,5 @@ func (n Native) GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1beta2.P
 				},
 			},
 		},
-	}
+	}, nil
 }
