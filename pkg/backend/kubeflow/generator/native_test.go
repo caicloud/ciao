@@ -15,12 +15,16 @@
 package generator
 
 import (
+	"reflect"
 	"testing"
 
+	v1 "k8s.io/api/core/v1"
+	k8sresource "k8s.io/apimachinery/pkg/api/resource"
 	pytorchv1beta2 "github.com/kubeflow/pytorch-operator/pkg/apis/pytorch/v1beta2"
 	common "github.com/kubeflow/tf-operator/pkg/apis/common/v1beta2"
 	tfv1beta2 "github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1beta2"
 
+	"github.com/caicloud/ciao/pkg/resource"
 	"github.com/caicloud/ciao/pkg/types"
 )
 
@@ -31,19 +35,41 @@ func TestNewTFJob(t *testing.T) {
 	expectedWorkerCount := 1
 	expectedImage := "image"
 	expectedCleanPolicy := types.CleanPodPolicyAll
+	expectedPSLimits := v1.ResourceList{
+		resource.CPU:    k8sresource.MustParse("100m"),
+		resource.Memory: k8sresource.MustParse("100Mi"),
+	}
+	expectedWorkerLimits := v1.ResourceList{
+		resource.CPU:    k8sresource.MustParse("1000m"),
+		resource.Memory: k8sresource.MustParse("1Gi"),
+	}
 
 	param := &types.Parameter{
 		PSCount:     expectedPSCount,
 		WorkerCount: expectedWorkerCount,
 		Image:       expectedImage,
 		CleanPolicy: types.CleanPodPolicyAll,
+		Resource: resource.JobResource{
+			WorkerCPU:    "1000m",
+			WorkerMemory: "1Gi",
+			PSCPU:        "100m",
+			PSMemory:     "100Mi",
+		},
 	}
 
-	tfJob := cm.GenerateTFJob(param)
+	tfJob, err := cm.GenerateTFJob(param)
+	if err != nil {
+		t.Fatal(err)
+	}
 	actualPSCount := *tfJob.Spec.TFReplicaSpecs[tfv1beta2.TFReplicaTypePS].Replicas
 	actualWorkerCount := *tfJob.Spec.TFReplicaSpecs[tfv1beta2.TFReplicaTypeWorker].Replicas
 	actualImage := tfJob.Spec.TFReplicaSpecs[tfv1beta2.TFReplicaTypePS].Template.Spec.Containers[0].Image
 	actualCleanPolicy := *tfJob.Spec.CleanPodPolicy
+	actualPSLimits := tfJob.Spec.TFReplicaSpecs[tfv1beta2.TFReplicaTypePS].
+		Template.Spec.Containers[0].Resources.Limits
+	actualWorkerLimits := tfJob.Spec.TFReplicaSpecs[tfv1beta2.TFReplicaTypeWorker].
+		Template.Spec.Containers[0].Resources.Limits
+
 	if actualPSCount != int32(expectedPSCount) {
 		t.Errorf("Expected %d ps, got %d", expectedPSCount, actualPSCount)
 	}
@@ -56,6 +82,12 @@ func TestNewTFJob(t *testing.T) {
 	if actualCleanPolicy != common.CleanPodPolicy(expectedCleanPolicy) {
 		t.Errorf("Expected clean policy %s, got %s", expectedCleanPolicy, actualCleanPolicy)
 	}
+	if !reflect.DeepEqual(actualPSLimits, expectedPSLimits) {
+		t.Errorf("Expected ps resource limits %v, got %v", expectedPSLimits, actualPSLimits)
+	}
+	if !reflect.DeepEqual(actualWorkerLimits, expectedWorkerLimits) {
+		t.Errorf("Expected worker resource limits %v, got %v", expectedWorkerLimits, actualWorkerLimits)
+	}
 }
 
 func TestNewPyTorchJob(t *testing.T) {
@@ -65,19 +97,41 @@ func TestNewPyTorchJob(t *testing.T) {
 	expectedWorkerCount := 1
 	expectedImage := "image"
 	expectedCleanPolicy := types.CleanPodPolicyAll
+	expectedMasterLimits := v1.ResourceList{
+		resource.CPU:    k8sresource.MustParse("100m"),
+		resource.Memory: k8sresource.MustParse("100Mi"),
+	}
+	expectedWorkerLimits := v1.ResourceList{
+		resource.CPU:    k8sresource.MustParse("1000m"),
+		resource.Memory: k8sresource.MustParse("1Gi"),
+	}
 
 	param := &types.Parameter{
 		MasterCount: expectedMasterCount,
 		WorkerCount: expectedWorkerCount,
 		Image:       expectedImage,
 		CleanPolicy: types.CleanPodPolicyAll,
+		Resource: resource.JobResource{
+			WorkerCPU:    "1000m",
+			WorkerMemory: "1Gi",
+			MasterCPU:    "100m",
+			MasterMemory: "100Mi",
+		},
 	}
 
-	pytorchJob := cm.GeneratePyTorchJob(param)
+	pytorchJob, err := cm.GeneratePyTorchJob(param)
+	if err != nil {
+		t.Fatal(err)
+	}
 	actualMasterCount := *pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1beta2.PyTorchReplicaTypeMaster].Replicas
 	actualWorkerCount := *pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1beta2.PyTorchReplicaTypeWorker].Replicas
 	actualImage := pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1beta2.PyTorchReplicaTypeMaster].Template.Spec.Containers[0].Image
 	actualCleanPolicy := *pytorchJob.Spec.CleanPodPolicy
+	actualMasterLimits := pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1beta2.PyTorchReplicaTypeMaster].
+		Template.Spec.Containers[0].Resources.Limits
+	actualWorkerLimits := pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1beta2.PyTorchReplicaTypeWorker].
+		Template.Spec.Containers[0].Resources.Limits
+
 	if actualMasterCount != int32(expectedMasterCount) {
 		t.Errorf("Expected %d masters, got %d", expectedMasterCount, actualMasterCount)
 	}
@@ -89,5 +143,11 @@ func TestNewPyTorchJob(t *testing.T) {
 	}
 	if actualCleanPolicy != common.CleanPodPolicy(expectedCleanPolicy) {
 		t.Errorf("Expected clean policy %s, got %s", expectedCleanPolicy, actualCleanPolicy)
+	}
+	if !reflect.DeepEqual(actualMasterLimits, expectedMasterLimits) {
+		t.Errorf("Expected master resource limits %v, got %v", expectedMasterLimits, actualMasterLimits)
+	}
+	if !reflect.DeepEqual(actualWorkerLimits, expectedWorkerLimits) {
+		t.Errorf("Expected worker resource limits %v, got %v", expectedWorkerLimits, actualWorkerLimits)
 	}
 }

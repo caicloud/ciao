@@ -18,12 +18,22 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/caicloud/ciao/pkg/resource"
 	"github.com/caicloud/ciao/pkg/types"
 )
 
 // TestPreprocess test the preprocess logic.
 func TestPreprocess(t *testing.T) {
-	i := New()
+	defaultRes := resource.JobResource{
+		WorkerCPU:    "1000m",
+		WorkerMemory: "1Gi",
+		PSCPU:        "1000m",
+		PSMemory:     "1Gi",
+		MasterCPU:    "1000m",
+		MasterMemory: "1Gi",
+	}
+
+	i := New(defaultRes)
 	type TestCase struct {
 		Code     string
 		Expected *types.Parameter
@@ -39,6 +49,7 @@ some code here.
 				Framework:   types.FrameworkTypeTensorFlow,
 				PSCount:     1,
 				WorkerCount: 1,
+				Resource:    defaultRes,
 			},
 		},
 		{
@@ -49,6 +60,7 @@ some code here.
 			Expected: &types.Parameter{
 				Framework: types.FrameworkTypeTensorFlow,
 				PSCount:   1,
+				Resource:  defaultRes,
 			},
 		},
 		{
@@ -57,30 +69,34 @@ some code here.
 			Expected: &types.Parameter{
 				Framework: types.FrameworkTypeTensorFlow,
 				PSCount:   1,
+				Resource:  defaultRes,
 			},
 		},
 		{
 			Code: `%framework=tensorflow
 %cleanPolicy=running`,
 			Expected: &types.Parameter{
-				Framework: types.FrameworkTypeTensorFlow,
+				Framework:   types.FrameworkTypeTensorFlow,
 				CleanPolicy: types.CleanPodPolicyRunning,
+				Resource:    defaultRes,
 			},
 		},
 		{
 			Code: `%framework=tensorflow
 %cleanPolicy=all`,
 			Expected: &types.Parameter{
-				Framework: types.FrameworkTypeTensorFlow,
+				Framework:   types.FrameworkTypeTensorFlow,
 				CleanPolicy: types.CleanPodPolicyAll,
+				Resource:    defaultRes,
 			},
 		},
 		{
 			Code: `%framework=tensorflow
 %cleanPolicy=none`,
 			Expected: &types.Parameter{
-				Framework: types.FrameworkTypeTensorFlow,
+				Framework:   types.FrameworkTypeTensorFlow,
 				CleanPolicy: types.CleanPodPolicyNone,
+				Resource:    defaultRes,
 			},
 		},
 		{
@@ -88,8 +104,61 @@ some code here.
 			Code: `%framework=tensorflow
 %cleanPolicy=test`,
 			Expected: &types.Parameter{
-				Framework: types.FrameworkTypeTensorFlow,
+				Framework:   types.FrameworkTypeTensorFlow,
 				CleanPolicy: types.CleanPodPolicyNone,
+				Resource:    defaultRes,
+			},
+		},
+		{
+			Code: `%framework=tensorflow
+%ps=1;%cpu=100m;%memory=100Mi`,
+			Expected: &types.Parameter{
+				Framework: types.FrameworkTypeTensorFlow,
+				PSCount:   1,
+				Resource: resource.JobResource{
+					PSCPU:        "100m",
+					PSMemory:     "100Mi",
+					WorkerCPU:    defaultRes.WorkerCPU,
+					WorkerMemory: defaultRes.WorkerMemory,
+					MasterCPU:    defaultRes.MasterCPU,
+					MasterMemory: defaultRes.MasterMemory,
+				},
+			},
+		},
+		{
+			Code: `%framework=tensorflow
+%ps=1;%cpu=100m;%memory=100Mi
+%worker=2;%cpu=10m;%memory=10Mi`,
+			Expected: &types.Parameter{
+				Framework:   types.FrameworkTypeTensorFlow,
+				PSCount:     1,
+				WorkerCount: 2,
+				Resource: resource.JobResource{
+					PSCPU:        "100m",
+					PSMemory:     "100Mi",
+					WorkerCPU:    "10m",
+					WorkerMemory: "10Mi",
+					MasterCPU:    defaultRes.MasterCPU,
+					MasterMemory: defaultRes.MasterMemory,
+				},
+			},
+		},
+		{
+			Code: `%framework=pytorch
+%master=1;%cpu=100m;%memory=100Mi
+%worker=2;%cpu=10m;%memory=10Mi`,
+			Expected: &types.Parameter{
+				Framework:   types.FrameworkTypePyTorch,
+				MasterCount: 1,
+				WorkerCount: 2,
+				Resource: resource.JobResource{
+					PSCPU:        defaultRes.PSCPU,
+					PSMemory:     defaultRes.PSMemory,
+					WorkerCPU:    "10m",
+					WorkerMemory: "10Mi",
+					MasterCPU:    "100m",
+					MasterMemory: "100Mi",
+				},
 			},
 		},
 	}
@@ -107,7 +176,7 @@ some code here.
 
 // TestGetPreProcessedCode tests the logic about getting the preprocessed code.
 func TestGetPreProcessedCode(t *testing.T) {
-	i := New()
+	i := New(resource.JobResource{})
 	type TestCase struct {
 		Code     string
 		Expected string

@@ -23,6 +23,6 @@ import (
 
 // Interface is the type for generator, which is used to generate TFJob/PyTorchJob.
 type Interface interface {
-	GenerateTFJob(parameter *types.Parameter) *tfv1beta2.TFJob
-	GeneratePyTorchJob(parameter *types.Parameter) *pytorchv1beta2.PyTorchJob
+	GenerateTFJob(parameter *types.Parameter) (*tfv1beta2.TFJob, error)
+	GeneratePyTorchJob(parameter *types.Parameter) (*pytorchv1beta2.PyTorchJob, error)
 }

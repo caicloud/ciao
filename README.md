@@ -43,6 +43,20 @@ or
 %cleanPolicy=all/running/none
 ```
 
+When there is no resource set in magic commands, by default it will use resource from config file. You can also override the config by specifying magic commands below:
+
+```
+%framework=tensorflow
+%ps={number};%cpu={cpu};%memory={mem}
+%worker={number};%cpu={cpu};%memory={mem}
+%cleanPolicy=all/running/none
+```
+
+Please pay attention about some points:
+- The job role need to be the first command of one line. 
+- The resource config of one role of job need to be in the same line with the job role.
+- Magic commands are separated by ';'
+
 ### Examples
 
 - [Distributed Training using TensorFlow](./docs/examples/tensorflow/example.ipynb)

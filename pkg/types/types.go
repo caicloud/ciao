@@ -14,6 +14,10 @@
 
 package types
 
+import (
+	"github.com/caicloud/ciao/pkg/resource"
+)
+
 // Parameter is the type for the parameter of the job.
 type Parameter struct {
 	Framework   FrameworkType
@@ -24,6 +28,7 @@ type Parameter struct {
 	GenerateName string
 	Image        string
 	CleanPolicy  string
+	Resource     resource.JobResource
 }
 
 // Job is the type for general jobs (PyTorchJob, TFJob).
@@ -48,7 +53,7 @@ const (
 
 // CleanPodPolicy describes how to deal with pods when the job is finished.
 const (
-	CleanPodPolicyAll       string = "all"
-	CleanPodPolicyRunning   string = "running"
-	CleanPodPolicyNone      string = "none"
+	CleanPodPolicyAll     = "all"
+	CleanPodPolicyRunning = "running"
+	CleanPodPolicyNone    = "none"
 )

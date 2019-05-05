@@ -19,7 +19,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/caicloud/ciao/pkg/resource"
 	"github.com/caicloud/ciao/pkg/types"
+)
+
+const (
+	Separator = ";"
 )
 
 // Interpreter is the type for the simple interpreter.
@@ -29,22 +34,28 @@ type Interpreter struct {
 	PSPrefix          string
 	MasterPrefix      string
 	CleanPolicyPrefix string
+	CPUPrefix         string
+	MemoryPrefix      string
+	DefaultResource   resource.JobResource
 }
 
 // New returns a new interpreter.
-func New() *Interpreter {
+func New(res resource.JobResource) *Interpreter {
 	return &Interpreter{
 		FrameworkPrefix:   "%framework=",
 		WorkerPrefix:      "%worker=",
 		PSPrefix:          "%ps=",
 		MasterPrefix:      "%master=",
 		CleanPolicyPrefix: "%cleanPolicy=",
+		CPUPrefix:         "%cpu=",
+		MemoryPrefix:      "%memory=",
+		DefaultResource:   res,
 	}
 }
 
 // Preprocess interprets the magic commands.
 func (i Interpreter) Preprocess(code string) (*types.Parameter, error) {
-	param := &types.Parameter{}
+	param := &types.Parameter{Resource: i.DefaultResource}
 	lines := strings.Split(code, "\n")
 	for _, line := range lines {
 		if len(line) == 0 {
@@ -61,25 +72,60 @@ func (i Interpreter) Preprocess(code string) (*types.Parameter, error) {
 
 func (i Interpreter) parseMagicCommand(param *types.Parameter, line string) error {
 	var err error
+
+	cmds := strings.Split(line, Separator)
 	switch {
-	case strings.Contains(line, i.FrameworkPrefix):
-		param.Framework = types.FrameworkType(line[len(i.FrameworkPrefix):])
-	case strings.Contains(line, i.WorkerPrefix):
-		param.WorkerCount, err = strconv.Atoi(line[len(i.WorkerPrefix):])
+	case strings.Contains(cmds[0], i.FrameworkPrefix):
+		param.Framework = types.FrameworkType(cmds[0][len(i.FrameworkPrefix):])
+	case strings.Contains(cmds[0], i.WorkerPrefix):
+		param.WorkerCount, err = strconv.Atoi(cmds[0][len(i.WorkerPrefix):])
 		if err != nil {
 			return err
 		}
-	case strings.Contains(line, i.PSPrefix):
-		param.PSCount, err = strconv.Atoi(line[len(i.PSPrefix):])
+		if len(cmds) > 1 {
+			for _, cmd := range cmds[1:] {
+				switch {
+				case strings.Contains(cmd, i.CPUPrefix):
+					param.Resource.WorkerCPU = cmd[len(i.CPUPrefix):]
+				case strings.Contains(cmd, i.MemoryPrefix):
+					param.Resource.WorkerMemory = cmd[len(i.MemoryPrefix):]
+				}
+			}
+		}
+
+	case strings.Contains(cmds[0], i.PSPrefix):
+		param.PSCount, err = strconv.Atoi(cmds[0][len(i.PSPrefix):])
 		if err != nil {
 			return err
 		}
-	case strings.Contains(line, i.MasterPrefix):
-		param.MasterCount, err = strconv.Atoi(line[len(i.MasterPrefix):])
+		if len(cmds) > 1 {
+			for _, cmd := range cmds[1:] {
+				switch {
+				case strings.Contains(cmd, i.CPUPrefix):
+					param.Resource.PSCPU = cmd[len(i.CPUPrefix):]
+				case strings.Contains(cmd, i.MemoryPrefix):
+					param.Resource.PSMemory = cmd[len(i.MemoryPrefix):]
+				}
+			}
+		}
+
+	case strings.Contains(cmds[0], i.MasterPrefix):
+		param.MasterCount, err = strconv.Atoi(cmds[0][len(i.MasterPrefix):])
 		if err != nil {
 			return err
 		}
-	case strings.Contains(line, i.CleanPolicyPrefix):
+		if len(cmds) > 1 {
+			for _, cmd := range cmds[1:] {
+				switch {
+				case strings.Contains(cmd, i.CPUPrefix):
+					param.Resource.MasterCPU = cmd[len(i.CPUPrefix):]
+				case strings.Contains(cmd, i.MemoryPrefix):
+					param.Resource.MasterMemory = cmd[len(i.MemoryPrefix):]
+				}
+			}
+		}
+
+	case strings.Contains(cmds[0], i.CleanPolicyPrefix):
 		// Set default clean pod policy to None.
 		param.CleanPolicy = types.CleanPodPolicyNone
 		policy := line[len(i.CleanPolicyPrefix):]

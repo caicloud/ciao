@@ -27,4 +27,11 @@ const (
 	S2IRegistry    = "registry"
 	S2IUsername    = "username"
 	S2IPassword    = "password"
+
+	Worker = "worker"
+	PS     = "ps"
+	Master = "master"
+	CPU    = "cpu"
+	Memory = "memory"
+	GPU    = "gpu"
 )

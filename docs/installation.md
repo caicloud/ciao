@@ -21,6 +21,15 @@ s2i:
   username: {input-your-username}
   password: {input-your-pwd}
   registry: {input-your-registry}
+worker:
+  cpu: {default-worker-cpu}
+  memory: {default-worker-memory}
+ps:
+  cpu: {default-ps-cpu}
+  memory: {default-ps-memory}
+master:
+  cpu: {default-master-cpu}
+  memory: {default-master-memory}      
 ```
 
 If you choose `img` or `s2i` to provide the functionality of converting source code to image, `username` and `password` are necessary to push the image to the Docker registry. `registry` is optional, default to `https://index.docker.io/v1/`.
@@ -100,6 +109,15 @@ s2i:
   registry: {registry to be used to push images, optional}
   username: {username}
   password: {password}
+worker:
+  cpu: {default-worker-cpu}
+  memory: {default-worker-memory}
+ps:
+  cpu: {default-ps-cpu}
+  memory: {default-ps-memory}
+master:
+  cpu: {default-master-cpu}
+  memory: {default-master-memory}      
 ```
 
 There are two options about tools to convert the source code in Jupyter Notebook to Docker image:
