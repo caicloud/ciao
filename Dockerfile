@@ -49,6 +49,7 @@ RUN apk add --no-cache \
     strace \
     zeromq \
     gcc \
+    linux-headers \
     g++ \
     python \
     python-dev \
