@@ -18,9 +18,9 @@ import (
 	"fmt"
 
 	s2iconfigmap "github.com/caicloud/ciao/pkg/s2i/configmap"
-	pytorchv1beta2 "github.com/kubeflow/pytorch-operator/pkg/apis/pytorch/v1beta2"
-	common "github.com/kubeflow/tf-operator/pkg/apis/common/v1beta2"
-	tfv1beta2 "github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1beta2"
+	pytorchv1 "github.com/kubeflow/pytorch-operator/pkg/apis/pytorch/v1"
+	common "github.com/kubeflow/tf-operator/pkg/apis/common/v1"
+	tfv1 "github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1"
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -45,7 +45,7 @@ func NewCM(namespace string) *CM {
 }
 
 // GenerateTFJob generates a new TFJob.
-func (c CM) GenerateTFJob(parameter *types.Parameter) (*tfv1beta2.TFJob, error) {
+func (c CM) GenerateTFJob(parameter *types.Parameter) (*tfv1.TFJob, error) {
 	psCount := int32(parameter.PSCount)
 	workerCount := int32(parameter.WorkerCount)
 	cleanPodPolicy := common.CleanPodPolicy(parameter.CleanPolicy)
@@ -62,18 +62,18 @@ func (c CM) GenerateTFJob(parameter *types.Parameter) (*tfv1beta2.TFJob, error) 
 	mountPath := fmt.Sprintf("/%s", parameter.Image)
 	filename := fmt.Sprintf("/%s/%s", parameter.Image, s2iconfigmap.FileName)
 
-	return &tfv1beta2.TFJob{
+	return &tfv1.TFJob{
 		TypeMeta: metav1.TypeMeta{
-			Kind: tfv1beta2.Kind,
+			Kind: tfv1.Kind,
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      parameter.GenerateName,
 			Namespace: c.Namespace,
 		},
-		Spec: tfv1beta2.TFJobSpec{
+		Spec: tfv1.TFJobSpec{
 			CleanPodPolicy: &cleanPodPolicy,
-			TFReplicaSpecs: map[tfv1beta2.TFReplicaType]*common.ReplicaSpec{
-				tfv1beta2.TFReplicaTypePS: {
+			TFReplicaSpecs: map[tfv1.TFReplicaType]*common.ReplicaSpec{
+				tfv1.TFReplicaTypePS: {
 					Replicas: &psCount,
 					Template: v1.PodTemplateSpec{
 						Spec: v1.PodSpec{
@@ -111,7 +111,7 @@ func (c CM) GenerateTFJob(parameter *types.Parameter) (*tfv1beta2.TFJob, error) 
 						},
 					},
 				},
-				tfv1beta2.TFReplicaTypeWorker: {
+				tfv1.TFReplicaTypeWorker: {
 					Replicas: &workerCount,
 					Template: v1.PodTemplateSpec{
 						Spec: v1.PodSpec{
@@ -155,7 +155,7 @@ func (c CM) GenerateTFJob(parameter *types.Parameter) (*tfv1beta2.TFJob, error) 
 }
 
 // GeneratePyTorchJob generates a new PyTorchJob.
-func (c CM) GeneratePyTorchJob(parameter *types.Parameter) (*pytorchv1beta2.PyTorchJob, error) {
+func (c CM) GeneratePyTorchJob(parameter *types.Parameter) (*pytorchv1.PyTorchJob, error) {
 	masterCount := int32(parameter.MasterCount)
 	workerCount := int32(parameter.WorkerCount)
 	cleanPodPolicy := common.CleanPodPolicy(parameter.CleanPolicy)
@@ -172,18 +172,18 @@ func (c CM) GeneratePyTorchJob(parameter *types.Parameter) (*pytorchv1beta2.PyTo
 	mountPath := fmt.Sprintf("/%s", parameter.Image)
 	filename := fmt.Sprintf("/%s/%s", parameter.Image, s2iconfigmap.FileName)
 
-	return &pytorchv1beta2.PyTorchJob{
+	return &pytorchv1.PyTorchJob{
 		TypeMeta: metav1.TypeMeta{
-			Kind: pytorchv1beta2.Kind,
+			Kind: pytorchv1.Kind,
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      parameter.GenerateName,
 			Namespace: c.Namespace,
 		},
-		Spec: pytorchv1beta2.PyTorchJobSpec{
+		Spec: pytorchv1.PyTorchJobSpec{
 			CleanPodPolicy: &cleanPodPolicy,
-			PyTorchReplicaSpecs: map[pytorchv1beta2.PyTorchReplicaType]*common.ReplicaSpec{
-				pytorchv1beta2.PyTorchReplicaTypeMaster: {
+			PyTorchReplicaSpecs: map[pytorchv1.PyTorchReplicaType]*common.ReplicaSpec{
+				pytorchv1.PyTorchReplicaTypeMaster: {
 					Replicas: &masterCount,
 					Template: v1.PodTemplateSpec{
 						Spec: v1.PodSpec{
@@ -221,7 +221,7 @@ func (c CM) GeneratePyTorchJob(parameter *types.Parameter) (*pytorchv1beta2.PyTo
 						},
 					},
 				},
-				pytorchv1beta2.PyTorchReplicaTypeWorker: {
+				pytorchv1.PyTorchReplicaTypeWorker: {
 					Replicas: &workerCount,
 					Template: v1.PodTemplateSpec{
 						Spec: v1.PodSpec{

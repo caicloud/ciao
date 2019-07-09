@@ -23,7 +23,7 @@ func (b Backend) createPyTorchJob(parameter *types.Parameter) (*types.Job, error
 	if err != nil {
 		return nil, err
 	}
-	pytorchJob, err = b.PyTorchJobClient.KubeflowV1beta2().PyTorchJobs(b.Namespace).Create(pytorchJob)
+	pytorchJob, err = b.PyTorchJobClient.KubeflowV1().PyTorchJobs(b.Namespace).Create(pytorchJob)
 	if err != nil {
 		return nil, err
 	}

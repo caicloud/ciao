@@ -20,9 +20,9 @@ import (
 
 	v1 "k8s.io/api/core/v1"
 	k8sresource "k8s.io/apimachinery/pkg/api/resource"
-	pytorchv1beta2 "github.com/kubeflow/pytorch-operator/pkg/apis/pytorch/v1beta2"
-	common "github.com/kubeflow/tf-operator/pkg/apis/common/v1beta2"
-	tfv1beta2 "github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1beta2"
+	pytorchv1 "github.com/kubeflow/pytorch-operator/pkg/apis/pytorch/v1"
+	common "github.com/kubeflow/tf-operator/pkg/apis/common/v1"
+	tfv1 "github.com/kubeflow/tf-operator/pkg/apis/tensorflow/v1"
 
 	"github.com/caicloud/ciao/pkg/resource"
 	"github.com/caicloud/ciao/pkg/types"
@@ -61,13 +61,13 @@ func TestNewTFJob(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	actualPSCount := *tfJob.Spec.TFReplicaSpecs[tfv1beta2.TFReplicaTypePS].Replicas
-	actualWorkerCount := *tfJob.Spec.TFReplicaSpecs[tfv1beta2.TFReplicaTypeWorker].Replicas
-	actualImage := tfJob.Spec.TFReplicaSpecs[tfv1beta2.TFReplicaTypePS].Template.Spec.Containers[0].Image
+	actualPSCount := *tfJob.Spec.TFReplicaSpecs[tfv1.TFReplicaTypePS].Replicas
+	actualWorkerCount := *tfJob.Spec.TFReplicaSpecs[tfv1.TFReplicaTypeWorker].Replicas
+	actualImage := tfJob.Spec.TFReplicaSpecs[tfv1.TFReplicaTypePS].Template.Spec.Containers[0].Image
 	actualCleanPolicy := *tfJob.Spec.CleanPodPolicy
-	actualPSLimits := tfJob.Spec.TFReplicaSpecs[tfv1beta2.TFReplicaTypePS].
+	actualPSLimits := tfJob.Spec.TFReplicaSpecs[tfv1.TFReplicaTypePS].
 		Template.Spec.Containers[0].Resources.Limits
-	actualWorkerLimits := tfJob.Spec.TFReplicaSpecs[tfv1beta2.TFReplicaTypeWorker].
+	actualWorkerLimits := tfJob.Spec.TFReplicaSpecs[tfv1.TFReplicaTypeWorker].
 		Template.Spec.Containers[0].Resources.Limits
 
 	if actualPSCount != int32(expectedPSCount) {
@@ -123,13 +123,13 @@ func TestNewPyTorchJob(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	actualMasterCount := *pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1beta2.PyTorchReplicaTypeMaster].Replicas
-	actualWorkerCount := *pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1beta2.PyTorchReplicaTypeWorker].Replicas
-	actualImage := pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1beta2.PyTorchReplicaTypeMaster].Template.Spec.Containers[0].Image
+	actualMasterCount := *pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1.PyTorchReplicaTypeMaster].Replicas
+	actualWorkerCount := *pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1.PyTorchReplicaTypeWorker].Replicas
+	actualImage := pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1.PyTorchReplicaTypeMaster].Template.Spec.Containers[0].Image
 	actualCleanPolicy := *pytorchJob.Spec.CleanPodPolicy
-	actualMasterLimits := pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1beta2.PyTorchReplicaTypeMaster].
+	actualMasterLimits := pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1.PyTorchReplicaTypeMaster].
 		Template.Spec.Containers[0].Resources.Limits
-	actualWorkerLimits := pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1beta2.PyTorchReplicaTypeWorker].
+	actualWorkerLimits := pytorchJob.Spec.PyTorchReplicaSpecs[pytorchv1.PyTorchReplicaTypeWorker].
 		Template.Spec.Containers[0].Resources.Limits
 
 	if actualMasterCount != int32(expectedMasterCount) {
