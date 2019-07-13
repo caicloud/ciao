@@ -20,6 +20,9 @@ import (
 
 // Interface is the type for backend.
 type Interface interface {
+	// ExecCode runs the job according to the parameters.
 	ExecCode(parameter *types.Parameter) (*types.Job, error)
+	// GetLogs get the logs from the job and output to STDOUT.
+	// Outputs in STDOUT will be redirected to Jupyter Notebook's output handler.
 	GetLogs(job *types.Job)
 }
