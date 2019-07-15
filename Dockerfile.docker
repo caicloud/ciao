@@ -63,7 +63,7 @@ COPY --from=img /usr/bin/img /usr/bin/img
 COPY --from=runc /usr/bin/runc /usr/bin/runc
 COPY --from=build-env /usr/bin/kubeflow-kernel /usr/bin/kubeflow-kernel
 
-COPY ./hack/k8s.config.yaml /etc/ciao/config.yaml
+COPY ./hack/config.yaml /etc/ciao/config.yaml
 COPY ./artifacts /usr/share/jupyter/kernels/kubeflow
 
 # run kernel gateway on container start, not notebook server
