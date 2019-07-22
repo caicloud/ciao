@@ -1,10 +1,10 @@
 ARG RUNC_VERSION=9f9c96235cc97674e935002fc3d78361b696a69e
 
-FROM golang:1.10-alpine AS build-env
+FROM golang:1.10-alpine3.7 AS build-env
 
 RUN apk add --no-cache \
-    zeromq-dev \
-    zeromq \
+    zeromq-dev=4.2.5-r0 \
+    zeromq=4.2.5-r0 \
     gcc \
     musl-dev
 
@@ -47,7 +47,9 @@ RUN apk add --no-cache \
     shadow \
     shadow-uidmap \
     strace \
-    zeromq \
+    zeromq=4.2.5-r0 \
+    libzmq=4.2.5-r0 \
+    zeromq-dev=4.2.5-r0 \
     gcc \
     linux-headers \
     g++ \
@@ -57,7 +59,7 @@ RUN apk add --no-cache \
     musl-dev
 
 # install the kernel gateway
-RUN pip install jupyter_kernel_gateway
+RUN pip install --no-cache-dir jupyter_kernel_gateway
 
 COPY --from=img /usr/bin/img /usr/bin/img
 COPY --from=runc /usr/bin/runc /usr/bin/runc
