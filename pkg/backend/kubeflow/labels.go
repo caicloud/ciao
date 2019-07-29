@@ -23,11 +23,11 @@ import (
 )
 
 const (
-	labelTFJobName      = "tf_job_name"
+	labelTFJobName      = "tf-job-name"
 	tfReplicaTypeLabel  = "tf-replica-type"
 	tfReplicaIndexLabel = "tf-replica-index"
 
-	labelPyTorchJobName      = "pytorch_job_name"
+	labelPyTorchJobName      = "pytorch-job-name"
 	pytorchReplicaTypeLabel  = "pytorch-replica-type"
 	pytorchReplicaIndexLabel = "pytorch-replica-index"
 )
