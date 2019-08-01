@@ -71,4 +71,4 @@ COPY ./artifacts /usr/share/jupyter/kernels/kubeflow
 # run kernel gateway on container start, not notebook server
 EXPOSE 8889
 ENTRYPOINT [ "jupyter", "kernelgateway" ]
-CMD ["--KernelGatewayApp.ip=0.0.0.0", "--KernelGatewayApp.port=8889", "--JupyterWebsocketPersonality.list_kernels=True", "--log-level=DEBUG"]
+CMD ["--KernelGatewayApp.ip=0.0.0.0", "--KernelGatewayApp.port=8889", "--JupyterWebsocketPersonality.list_kernels=True", "--log-level=DEBUG", "--KernelGatewayApp.env_process_whitelist=['KUBERNETES_SERVICE_HOST','KUBERNETES_SERVICE_PORT']"]
